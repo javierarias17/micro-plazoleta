@@ -55,7 +55,7 @@ public class CreateDishUseCase implements ICreateDishServicePort {
             throw new OwnerNotAuthorizedException(
                     FunctionalExceptionResponse.BUSINESS_VALIDATION_FAILED.getMessage(),
                     Map.of(DomainExceptionConstants.OWNER_ID,
-                            FunctionalExceptionResponse.OWNER_NOT_AUTHORIZED.getMessage()));
+                            FunctionalExceptionResponse.OWNER_NOT_AUTHORIZED_TO_CREATE_DISH.getMessage()));
         }
     }
 }

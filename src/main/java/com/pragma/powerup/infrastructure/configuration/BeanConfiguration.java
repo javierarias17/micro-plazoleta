@@ -86,6 +86,6 @@ public class BeanConfiguration {
 
     @Bean
     public IUpdateDishServicePort updateDishServicePort() {
-        return new UpdateDishUseCase(dishPersistencePort());
+        return new UpdateDishUseCase(dishPersistencePort(), restaurantPersistencePort(), authenticatedUserPort);
     }
 }
