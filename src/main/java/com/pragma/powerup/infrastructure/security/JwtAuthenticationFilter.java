@@ -43,11 +43,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String email = jwtTokenAdapter.getEmailFromToken(token);
             String role = jwtTokenAdapter.getRoleFromToken(token);
+            Long userId = jwtTokenAdapter.getUserIdFromToken(token);
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     email,
                     null,
                     List.of(new SimpleGrantedAuthority("ROLE_" + role)));
+            authentication.setDetails(userId);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (InvalidTokenException e) {

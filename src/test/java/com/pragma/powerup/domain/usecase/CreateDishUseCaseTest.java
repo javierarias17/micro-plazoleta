@@ -1,10 +1,12 @@
 package com.pragma.powerup.domain.usecase;
 
 import com.pragma.powerup.domain.exception.CategoryNotFoundException;
+import com.pragma.powerup.domain.exception.OwnerNotAuthorizedException;
 import com.pragma.powerup.domain.exception.RestaurantNotFoundException;
 import com.pragma.powerup.domain.model.CategoryModel;
 import com.pragma.powerup.domain.model.DishModel;
 import com.pragma.powerup.domain.model.RestaurantModel;
+import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.ICategoryPersistencePort;
 import com.pragma.powerup.domain.spi.IDishPersistencePort;
 import com.pragma.powerup.domain.spi.IRestaurantPersistencePort;
@@ -39,6 +41,9 @@ class CreateDishUseCaseTest {
     @Mock
     private ICategoryPersistencePort categoryPersistencePort;
 
+    @Mock
+    private IAuthenticatedUserPort authenticatedUserPort;
+
     @InjectMocks
     private CreateDishUseCase createDishUseCase;
 
@@ -64,6 +69,7 @@ class CreateDishUseCaseTest {
                 .thenReturn(Optional.of(savedRestaurant));
         when(categoryPersistencePort.findCategoryById(validDish.getCategoryId()))
                 .thenReturn(Optional.of(savedCategory));
+        when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(savedRestaurant.getOwnerId());
         when(dishPersistencePort.saveDish(any(DishModel.class))).thenReturn(savedDish);
 
         // Act
@@ -100,6 +106,20 @@ class CreateDishUseCaseTest {
 
         // Act & Assert
         assertThrows(CategoryNotFoundException.class,
+                () -> createDishUseCase.createDish(validDish));
+    }
+
+    @Test
+    void Expect_OwnerNotAuthorizedException_When_AuthenticatedUserIsNotRestaurantOwner() {
+        // Arrange
+        when(restaurantPersistencePort.findRestaurantById(validDish.getRestaurantId()))
+                .thenReturn(Optional.of(savedRestaurant));
+        when(categoryPersistencePort.findCategoryById(validDish.getCategoryId()))
+                .thenReturn(Optional.of(savedCategory));
+        when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(99L);
+
+        // Act & Assert
+        assertThrows(OwnerNotAuthorizedException.class,
                 () -> createDishUseCase.createDish(validDish));
     }
 }

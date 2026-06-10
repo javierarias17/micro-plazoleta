@@ -4,6 +4,7 @@ import com.pragma.powerup.domain.api.ICreateDishServicePort;
 import com.pragma.powerup.domain.exception.*;
 import com.pragma.powerup.domain.model.DishModel;
 import com.pragma.powerup.domain.model.RestaurantModel;
+import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.ICategoryPersistencePort;
 import com.pragma.powerup.domain.spi.IDishPersistencePort;
 import com.pragma.powerup.domain.spi.IRestaurantPersistencePort;
@@ -15,13 +16,16 @@ public class CreateDishUseCase implements ICreateDishServicePort {
     private final IDishPersistencePort dishPersistencePort;
     private final IRestaurantPersistencePort restaurantPersistencePort;
     private final ICategoryPersistencePort categoryPersistencePort;
+    private final IAuthenticatedUserPort authenticatedUserPort;
 
     public CreateDishUseCase(IDishPersistencePort dishPersistencePort,
             IRestaurantPersistencePort restaurantPersistencePort,
-            ICategoryPersistencePort categoryPersistencePort) {
+            ICategoryPersistencePort categoryPersistencePort,
+            IAuthenticatedUserPort authenticatedUserPort) {
         this.dishPersistencePort = dishPersistencePort;
         this.restaurantPersistencePort = restaurantPersistencePort;
         this.categoryPersistencePort = categoryPersistencePort;
+        this.authenticatedUserPort = authenticatedUserPort;
     }
 
     @Override
@@ -32,7 +36,7 @@ public class CreateDishUseCase implements ICreateDishServicePort {
     }
 
     private void validateData(DishModel dishModel) {
-        restaurantPersistencePort
+        RestaurantModel restaurant = restaurantPersistencePort
                 .findRestaurantById(dishModel.getRestaurantId())
                 .orElseThrow(() -> new RestaurantNotFoundException(
                         FunctionalExceptionResponse.BUSINESS_VALIDATION_FAILED.getMessage(),
@@ -46,11 +50,12 @@ public class CreateDishUseCase implements ICreateDishServicePort {
                         Map.of(DomainExceptionConstants.CATEGORY_ID,
                                 FunctionalExceptionResponse.CATEGORY_NOT_FOUND.getMessage())));
 
-        // TODO HU-05: validar que el propietario autenticado (obtenido de los claims
-        // del JWT)
-        // sea el dueño del restaurante antes de crear el plato.
-        // if (...) {
-        // throw new OwnerNotAuthorizedException(...);
-        // }
+        Long authenticatedUserId = authenticatedUserPort.getAuthenticatedUserId();
+        if (!restaurant.getOwnerId().equals(authenticatedUserId)) {
+            throw new OwnerNotAuthorizedException(
+                    FunctionalExceptionResponse.BUSINESS_VALIDATION_FAILED.getMessage(),
+                    Map.of(DomainExceptionConstants.OWNER_ID,
+                            FunctionalExceptionResponse.OWNER_NOT_AUTHORIZED.getMessage()));
+        }
     }
 }

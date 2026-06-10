@@ -3,6 +3,7 @@ package com.pragma.powerup.infrastructure.configuration;
 import com.pragma.powerup.domain.api.ICreateDishServicePort;
 import com.pragma.powerup.domain.api.ICreateRestaurantServicePort;
 import com.pragma.powerup.domain.api.IUpdateDishServicePort;
+import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.ICategoryPersistencePort;
 import com.pragma.powerup.domain.spi.IDishPersistencePort;
 import com.pragma.powerup.domain.spi.IRestaurantPersistencePort;
@@ -37,6 +38,7 @@ public class BeanConfiguration {
     private final IDishEntityMapper dishEntityMapper;
     private final ICategoryRepository categoryRepository;
     private final ICategoryEntityMapper categoryEntityMapper;
+    private final IAuthenticatedUserPort authenticatedUserPort;
 
     @Value("${adapter.micro-users.url}")
     private String microUsersUrl;
@@ -79,7 +81,7 @@ public class BeanConfiguration {
 
     @Bean
     public ICreateDishServicePort createDishServicePort() {
-        return new CreateDishUseCase(dishPersistencePort(), restaurantPersistencePort(), categoryPersistencePort());
+        return new CreateDishUseCase(dishPersistencePort(), restaurantPersistencePort(), categoryPersistencePort(), authenticatedUserPort);
     }
 
     @Bean

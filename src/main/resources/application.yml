@@ -5,5 +5,8 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}
 
+springdoc:
+  override-with-generic-response: false
+
 appDescription: "Pragma Powerup"
 appVersion: "1.0.0"
