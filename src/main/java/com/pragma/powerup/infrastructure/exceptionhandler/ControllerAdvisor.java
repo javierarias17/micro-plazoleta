@@ -1,8 +1,11 @@
 package com.pragma.powerup.infrastructure.exceptionhandler;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.pragma.powerup.domain.exception.CategoryNotFoundException;
 import com.pragma.powerup.domain.exception.FunctionalException;
+import com.pragma.powerup.domain.exception.OwnerNotAuthorizedException;
 import com.pragma.powerup.domain.exception.OwnerNotFoundException;
+import com.pragma.powerup.domain.exception.RestaurantNotFoundException;
 import com.pragma.powerup.domain.exception.TechnicalException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -77,6 +80,21 @@ public class ControllerAdvisor {
     @ExceptionHandler(OwnerNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleOwnerNotFoundException(OwnerNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildErrorResponse(ex));
+    }
+
+    @ExceptionHandler(RestaurantNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleRestaurantNotFoundException(RestaurantNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildErrorResponse(ex));
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleCategoryNotFoundException(CategoryNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildErrorResponse(ex));
+    }
+
+    @ExceptionHandler(OwnerNotAuthorizedException.class)
+    public ResponseEntity<Map<String, Object>> handleOwnerNotAuthorizedException(OwnerNotAuthorizedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(buildErrorResponse(ex));
     }
 
     private Map<String, Object> buildErrorResponse(FunctionalException ex) {
