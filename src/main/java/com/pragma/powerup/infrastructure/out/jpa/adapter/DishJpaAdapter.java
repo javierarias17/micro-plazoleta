@@ -6,6 +6,8 @@ import com.pragma.powerup.infrastructure.out.jpa.mapper.IDishEntityMapper;
 import com.pragma.powerup.infrastructure.out.jpa.repository.IDishRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 public class DishJpaAdapter implements IDishPersistencePort {
 
@@ -14,6 +16,17 @@ public class DishJpaAdapter implements IDishPersistencePort {
 
     @Override
     public DishModel saveDish(DishModel dishModel) {
+        return dishEntityMapper.toDishModel(
+                dishRepository.save(dishEntityMapper.toEntity(dishModel)));
+    }
+
+    @Override
+    public Optional<DishModel> findDishById(Long id) {
+        return dishRepository.findById(id).map(dishEntityMapper::toDishModel);
+    }
+
+    @Override
+    public DishModel updateDish(DishModel dishModel) {
         return dishEntityMapper.toDishModel(
                 dishRepository.save(dishEntityMapper.toEntity(dishModel)));
     }

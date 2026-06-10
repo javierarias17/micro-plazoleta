@@ -2,6 +2,7 @@ package com.pragma.powerup.infrastructure.exceptionhandler;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.pragma.powerup.domain.exception.CategoryNotFoundException;
+import com.pragma.powerup.domain.exception.DishNotFoundException;
 import com.pragma.powerup.domain.exception.FunctionalException;
 import com.pragma.powerup.domain.exception.OwnerNotAuthorizedException;
 import com.pragma.powerup.domain.exception.OwnerNotFoundException;
@@ -89,6 +90,11 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(CategoryNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleCategoryNotFoundException(CategoryNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildErrorResponse(ex));
+    }
+
+    @ExceptionHandler(DishNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleDishNotFoundException(DishNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildErrorResponse(ex));
     }
 
