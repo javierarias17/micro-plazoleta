@@ -1,8 +1,8 @@
 package com.pragma.powerup.domain.usecase;
 
 import com.pragma.powerup.domain.api.ICreateRestaurantServicePort;
-import com.pragma.powerup.domain.exception.DomainExceptionConstants;
-import com.pragma.powerup.domain.exception.FunctionalExceptionResponse;
+import com.pragma.powerup.domain.common.FieldConstants;
+import com.pragma.powerup.domain.exception.constant.FunctionalMessageConstants;
 import com.pragma.powerup.domain.exception.OwnerNotFoundException;
 import com.pragma.powerup.domain.model.RestaurantModel;
 import com.pragma.powerup.domain.spi.IRestaurantPersistencePort;
@@ -29,8 +29,8 @@ public class CreateRestaurantUseCase implements ICreateRestaurantServicePort {
 
     private void validateData(RestaurantModel restaurantModel) {
         if (!userValidationPort.isOwner(restaurantModel.getOwnerId())) {
-            throw new OwnerNotFoundException(FunctionalExceptionResponse.BUSINESS_VALIDATION_FAILED.getMessage(),
-                    Map.of(DomainExceptionConstants.OWNER_ID, FunctionalExceptionResponse.OWNER_NOT_FOUND.getMessage()));
+            throw new OwnerNotFoundException(FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
+                    Map.of(FieldConstants.OWNER_ID, FunctionalMessageConstants.OWNER_NOT_FOUND));
         }
     }
 }

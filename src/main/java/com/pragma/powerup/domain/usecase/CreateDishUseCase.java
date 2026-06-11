@@ -1,7 +1,9 @@
 package com.pragma.powerup.domain.usecase;
 
 import com.pragma.powerup.domain.api.ICreateDishServicePort;
+import com.pragma.powerup.domain.common.FieldConstants;
 import com.pragma.powerup.domain.exception.*;
+import com.pragma.powerup.domain.exception.constant.FunctionalMessageConstants;
 import com.pragma.powerup.domain.model.DishModel;
 import com.pragma.powerup.domain.model.RestaurantModel;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
@@ -39,23 +41,23 @@ public class CreateDishUseCase implements ICreateDishServicePort {
         RestaurantModel restaurant = restaurantPersistencePort
                 .findRestaurantById(dishModel.getRestaurantId())
                 .orElseThrow(() -> new RestaurantNotFoundException(
-                        FunctionalExceptionResponse.BUSINESS_VALIDATION_FAILED.getMessage(),
-                        Map.of(DomainExceptionConstants.RESTAURANT_ID,
-                                FunctionalExceptionResponse.RESTAURANT_NOT_FOUND.getMessage())));
+                        FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
+                        Map.of(FieldConstants.RESTAURANT_ID,
+                                FunctionalMessageConstants.RESTAURANT_NOT_FOUND)));
 
         categoryPersistencePort
                 .findCategoryById(dishModel.getCategoryId())
                 .orElseThrow(() -> new CategoryNotFoundException(
-                        FunctionalExceptionResponse.BUSINESS_VALIDATION_FAILED.getMessage(),
-                        Map.of(DomainExceptionConstants.CATEGORY_ID,
-                                FunctionalExceptionResponse.CATEGORY_NOT_FOUND.getMessage())));
+                        FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
+                        Map.of(FieldConstants.CATEGORY_ID,
+                                FunctionalMessageConstants.CATEGORY_NOT_FOUND)));
 
         Long authenticatedUserId = authenticatedUserPort.getAuthenticatedUserId();
         if (!restaurant.getOwnerId().equals(authenticatedUserId)) {
             throw new OwnerNotAuthorizedException(
-                    FunctionalExceptionResponse.BUSINESS_VALIDATION_FAILED.getMessage(),
-                    Map.of(DomainExceptionConstants.OWNER_ID,
-                            FunctionalExceptionResponse.OWNER_NOT_AUTHORIZED_TO_CREATE_DISH.getMessage()));
+                    FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
+                    Map.of(FieldConstants.OWNER_ID,
+                            FunctionalMessageConstants.OWNER_NOT_AUTHORIZED_TO_CREATE_DISH));
         }
     }
 }

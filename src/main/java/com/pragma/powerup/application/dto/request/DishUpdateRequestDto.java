@@ -1,5 +1,6 @@
 package com.pragma.powerup.application.dto.request;
 
+import com.pragma.powerup.domain.common.ValidationMessageConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,11 +15,11 @@ import javax.validation.constraints.Positive;
 public class DishUpdateRequestDto {
 
     @Schema(description = "Dish price (must be positive)", example = "28000")
-    @NotNull(message = "Price is required")
-    @Positive(message = "Price must be a positive number")
+    @NotNull(message = ValidationMessageConstants.MSG_PRICE_REQUIRED)
+    @Positive(message = ValidationMessageConstants.MSG_PRICE_POSITIVE)
     private Integer price;
 
     @Schema(description = "Dish description", example = "Updated traditional Colombian dish")
-    @NotBlank(message = "Description is required")
+    @NotBlank(message = ValidationMessageConstants.MSG_DESCRIPTION_REQUIRED)
     private String description;
 }

@@ -2,8 +2,8 @@ package com.pragma.powerup.domain.usecase;
 
 import com.pragma.powerup.domain.api.IUpdateDishServicePort;
 import com.pragma.powerup.domain.exception.DishNotFoundException;
-import com.pragma.powerup.domain.exception.DomainExceptionConstants;
-import com.pragma.powerup.domain.exception.FunctionalExceptionResponse;
+import com.pragma.powerup.domain.common.FieldConstants;
+import com.pragma.powerup.domain.exception.constant.FunctionalMessageConstants;
 import com.pragma.powerup.domain.exception.OwnerNotAuthorizedException;
 import com.pragma.powerup.domain.model.DishModel;
 import com.pragma.powerup.domain.model.RestaurantModel;
@@ -31,9 +31,9 @@ public class UpdateDishUseCase implements IUpdateDishServicePort {
     public DishModel updateDish(Long id, Integer price, String description) {
         DishModel dish = dishPersistencePort.findDishById(id)
                 .orElseThrow(() -> new DishNotFoundException(
-                        FunctionalExceptionResponse.BUSINESS_VALIDATION_FAILED.getMessage(),
-                        Map.of(DomainExceptionConstants.DISH_ID,
-                                FunctionalExceptionResponse.DISH_NOT_FOUND.getMessage())));
+                        FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
+                        Map.of(FieldConstants.DISH_ID,
+                                FunctionalMessageConstants.DISH_NOT_FOUND)));
 
         validateOwnership(dish);
 
@@ -47,16 +47,16 @@ public class UpdateDishUseCase implements IUpdateDishServicePort {
         RestaurantModel restaurant = restaurantPersistencePort
                 .findRestaurantById(dish.getRestaurantId())
                 .orElseThrow(() -> new DishNotFoundException(
-                        FunctionalExceptionResponse.BUSINESS_VALIDATION_FAILED.getMessage(),
-                        Map.of(DomainExceptionConstants.DISH_ID,
-                                FunctionalExceptionResponse.DISH_NOT_FOUND.getMessage())));
+                        FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
+                        Map.of(FieldConstants.DISH_ID,
+                                FunctionalMessageConstants.DISH_NOT_FOUND)));
 
         Long authenticatedUserId = authenticatedUserPort.getAuthenticatedUserId();
         if (!restaurant.getOwnerId().equals(authenticatedUserId)) {
             throw new OwnerNotAuthorizedException(
-                    FunctionalExceptionResponse.BUSINESS_VALIDATION_FAILED.getMessage(),
-                    Map.of(DomainExceptionConstants.OWNER_ID,
-                            FunctionalExceptionResponse.OWNER_NOT_AUTHORIZED_TO_UPDATE_DISH.getMessage()));
+                    FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
+                    Map.of(FieldConstants.OWNER_ID,
+                            FunctionalMessageConstants.OWNER_NOT_AUTHORIZED_TO_UPDATE_DISH));
         }
     }
 }

@@ -1,8 +1,8 @@
-package com.pragma.powerup.domain.exception;
+package com.pragma.powerup.domain.common;
 
-public class DomainExceptionConstants {
+public class FieldConstants {
 
-    private DomainExceptionConstants() {
+    private FieldConstants() {
         throw new IllegalStateException("Utility class");
     }
 

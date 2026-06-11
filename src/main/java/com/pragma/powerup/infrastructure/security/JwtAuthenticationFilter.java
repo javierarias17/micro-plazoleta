@@ -21,6 +21,8 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
+    private static final String ROLE_PREFIX = "ROLE_";
+    private static final String MSG_NO_AUTH_TOKEN = "No authentication token provided.";
     static final String MESSAGE_SECURITY = "message_security";
 
     private final JwtTokenAdapter jwtTokenAdapter;
@@ -34,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
             filterChain.doFilter(request, response);
-            request.setAttribute(MESSAGE_SECURITY, "No authentication token provided.");
+            request.setAttribute(MESSAGE_SECURITY, MSG_NO_AUTH_TOKEN);
             return;
         }
 
@@ -48,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     email,
                     null,
-                    List.of(new SimpleGrantedAuthority("ROLE_" + role)));
+                    List.of(new SimpleGrantedAuthority(ROLE_PREFIX + role)));
             authentication.setDetails(userId);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);

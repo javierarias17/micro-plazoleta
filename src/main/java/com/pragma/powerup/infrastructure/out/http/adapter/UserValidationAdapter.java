@@ -1,7 +1,7 @@
 package com.pragma.powerup.infrastructure.out.http.adapter;
 
 import com.pragma.powerup.domain.exception.TechnicalException;
-import com.pragma.powerup.domain.exception.TechnicalExceptionResponse;
+import com.pragma.powerup.domain.exception.constant.TechnicalMessageConstants;
 import com.pragma.powerup.domain.spi.IUserValidationPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -17,20 +17,22 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @RequiredArgsConstructor
 public class UserValidationAdapter implements IUserValidationPort {
 
+    private static final String ENDPOINT_USER_IS_OWNER = "/api/v1/user/%s/is-owner";
+
     private final RestTemplate restTemplate;
     private final String usersServiceUrl;
 
     @Override
     public boolean isOwner(Long userId) {
         try {
-            String url = usersServiceUrl + "/api/v1/user/" + userId + "/is-owner";
+            String url = usersServiceUrl + String.format(ENDPOINT_USER_IS_OWNER, userId);
             HttpEntity<Void> request = new HttpEntity<>(buildAuthHeaders());
             Boolean result = restTemplate.exchange(url, HttpMethod.GET, request, Boolean.class).getBody();
             return Boolean.TRUE.equals(result);
         } catch (HttpClientErrorException.NotFound e) {
             return false;
         } catch (ResourceAccessException e) {
-            throw new TechnicalException(TechnicalExceptionResponse.USER_VALIDATION_UNAVAILABLE.getMessage());
+            throw new TechnicalException(TechnicalMessageConstants.USER_VALIDATION_UNAVAILABLE);
         }
     }
 
