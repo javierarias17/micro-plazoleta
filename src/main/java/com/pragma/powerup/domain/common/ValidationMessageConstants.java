@@ -29,10 +29,12 @@ public class ValidationMessageConstants {
     public static final String MSG_EMPLOYEE_ID_REQUIRED = "Employee ID is required";
     public static final String MSG_CATEGORY_ID_REQUIRED = "Category ID is required";
     public static final String MSG_RESTAURANT_ID_REQUIRED = "Restaurant ID is required";
+    public static final String MSG_DISH_ID_REQUIRED = "Dish ID is required";
 
     // Dish
     public static final String MSG_DESCRIPTION_REQUIRED = "Description is required";
     public static final String MSG_PRICE_REQUIRED = "Price is required";
     public static final String MSG_PRICE_POSITIVE = "Price must be a positive number";
     public static final String MSG_IMAGE_URL_REQUIRED = "Image URL is required";
+    public static final String MSG_ACTIVE_REQUIRED = "Active status is required";
 }

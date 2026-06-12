@@ -19,4 +19,5 @@ public class FieldConstants {
     public static final String DESCRIPTION = "description";
     public static final String PRICE = "price";
     public static final String URL_IMAGE = "urlImage";
+    public static final String ACTIVE = "active";
 }

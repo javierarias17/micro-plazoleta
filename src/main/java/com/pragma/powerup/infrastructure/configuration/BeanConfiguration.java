@@ -3,6 +3,7 @@ package com.pragma.powerup.infrastructure.configuration;
 import com.pragma.powerup.domain.api.ICreateDishServicePort;
 import com.pragma.powerup.domain.api.ICreateRestaurantServicePort;
 import com.pragma.powerup.domain.api.ILinkEmployeeServicePort;
+import com.pragma.powerup.domain.api.IToggleDishStatusServicePort;
 import com.pragma.powerup.domain.api.IUpdateDishServicePort;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.ICategoryPersistencePort;
@@ -13,6 +14,7 @@ import com.pragma.powerup.domain.spi.IUserValidationPort;
 import com.pragma.powerup.domain.usecase.CreateDishUseCase;
 import com.pragma.powerup.domain.usecase.CreateRestaurantUseCase;
 import com.pragma.powerup.domain.usecase.LinkEmployeeUseCase;
+import com.pragma.powerup.domain.usecase.ToggleDishStatusUseCase;
 import com.pragma.powerup.domain.usecase.UpdateDishUseCase;
 import com.pragma.powerup.infrastructure.out.http.adapter.UserValidationAdapter;
 import com.pragma.powerup.infrastructure.out.jpa.adapter.CategoryJpaAdapter;
@@ -95,6 +97,11 @@ public class BeanConfiguration {
     @Bean
     public IUpdateDishServicePort updateDishServicePort() {
         return new UpdateDishUseCase(dishPersistencePort(), restaurantPersistencePort(), authenticatedUserPort);
+    }
+
+    @Bean
+    public IToggleDishStatusServicePort toggleDishStatusServicePort() {
+        return new ToggleDishStatusUseCase(dishPersistencePort(), restaurantPersistencePort(), authenticatedUserPort);
     }
 
     @Bean

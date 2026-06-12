@@ -15,4 +15,5 @@ public class FunctionalMessageConstants {
     public static final String CATEGORY_NOT_FOUND = "The category does not exist";
     public static final String DISH_NOT_FOUND = "The dish does not exist";
     public static final String EMPLOYEE_ALREADY_LINKED = "This employee is already linked to a restaurant";
+    public static final String OWNER_NOT_AUTHORIZED_TO_TOGGLE_DISH_STATUS = "You are not authorized to change the status of dishes for this restaurant";
 }

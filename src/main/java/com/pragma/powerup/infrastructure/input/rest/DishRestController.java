@@ -1,6 +1,7 @@
 package com.pragma.powerup.infrastructure.input.rest;
 
 import com.pragma.powerup.application.dto.request.DishRequestDto;
+import com.pragma.powerup.application.dto.request.DishStatusRequestDto;
 import com.pragma.powerup.application.dto.request.DishUpdateRequestDto;
 import com.pragma.powerup.application.dto.response.DishResponseDto;
 import com.pragma.powerup.application.handler.IDishHandler;
@@ -34,5 +35,12 @@ public class DishRestController implements IDishRestControllerDocs {
     public ResponseEntity<DishResponseDto> updateDish(@PathVariable Long id,
             @Valid @RequestBody DishUpdateRequestDto dishUpdateRequestDto) {
         return ResponseEntity.ok(dishHandler.updateDish(id, dishUpdateRequestDto));
+    }
+
+    @Override
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<DishResponseDto> toggleDishStatus(@PathVariable Long id,
+            @Valid @RequestBody DishStatusRequestDto dishStatusRequestDto) {
+        return ResponseEntity.ok(dishHandler.toggleDishStatus(id, dishStatusRequestDto));
     }
 }
