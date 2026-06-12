@@ -3,10 +3,9 @@ package com.pragma.powerup.domain.usecase;
 import com.pragma.powerup.domain.api.ILinkEmployeeServicePort;
 import com.pragma.powerup.domain.common.FieldConstants;
 import com.pragma.powerup.domain.common.ValidationMessageConstants;
-import com.pragma.powerup.domain.exception.FieldsValidationException;
 import com.pragma.powerup.domain.exception.EmployeeAlreadyLinkedException;
+import com.pragma.powerup.domain.exception.FieldsValidationException;
 import com.pragma.powerup.domain.exception.ForbiddenException;
-
 import com.pragma.powerup.domain.exception.OwnerNotFoundException;
 import com.pragma.powerup.domain.exception.RestaurantNotFoundException;
 import com.pragma.powerup.domain.exception.constant.FunctionalMessageConstants;
@@ -16,6 +15,7 @@ import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.IRestaurantEmployeePersistencePort;
 import com.pragma.powerup.domain.spi.IRestaurantPersistencePort;
 import com.pragma.powerup.domain.spi.IUserValidationPort;
+import com.pragma.powerup.domain.validator.FieldValidator;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,9 +28,9 @@ public class LinkEmployeeUseCase implements ILinkEmployeeServicePort {
     private final IAuthenticatedUserPort authenticatedUserPort;
 
     public LinkEmployeeUseCase(IRestaurantPersistencePort restaurantPersistencePort,
-                               IRestaurantEmployeePersistencePort restaurantEmployeePersistencePort,
-                               IUserValidationPort userValidationPort,
-                               IAuthenticatedUserPort authenticatedUserPort) {
+            IRestaurantEmployeePersistencePort restaurantEmployeePersistencePort,
+            IUserValidationPort userValidationPort,
+            IAuthenticatedUserPort authenticatedUserPort) {
         this.restaurantPersistencePort = restaurantPersistencePort;
         this.restaurantEmployeePersistencePort = restaurantEmployeePersistencePort;
         this.userValidationPort = userValidationPort;
@@ -52,11 +52,11 @@ public class LinkEmployeeUseCase implements ILinkEmployeeServicePort {
     private void validateForLinkEmployee(Long restaurantId, Long employeeId) {
         Map<String, String> errors = new LinkedHashMap<>();
 
-        if (restaurantId == null)
-            errors.put(FieldConstants.RESTAURANT_ID, ValidationMessageConstants.MSG_RESTAURANT_ID_REQUIRED);
+        FieldValidator.validateNotNull(restaurantId, FieldConstants.RESTAURANT_ID,
+                ValidationMessageConstants.MSG_RESTAURANT_ID_REQUIRED, errors);
 
-        if (employeeId == null)
-            errors.put(FieldConstants.EMPLOYEE_ID, ValidationMessageConstants.MSG_EMPLOYEE_ID_REQUIRED);
+        FieldValidator.validateNotNull(employeeId, FieldConstants.EMPLOYEE_ID,
+                ValidationMessageConstants.MSG_EMPLOYEE_ID_REQUIRED, errors);
 
         if (!errors.isEmpty())
             throw new FieldsValidationException(errors);
