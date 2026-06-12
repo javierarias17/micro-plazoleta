@@ -18,6 +18,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class UserValidationAdapter implements IUserValidationPort {
 
     private static final String ENDPOINT_USER_IS_OWNER = "/api/v1/user/%s/is-owner";
+    private static final String ENDPOINT_USER_IS_EMPLOYEE = "/api/v1/user/%s/is-employee";
 
     private final RestTemplate restTemplate;
     private final String usersServiceUrl;
@@ -26,6 +27,20 @@ public class UserValidationAdapter implements IUserValidationPort {
     public boolean isOwner(Long userId) {
         try {
             String url = usersServiceUrl + String.format(ENDPOINT_USER_IS_OWNER, userId);
+            HttpEntity<Void> request = new HttpEntity<>(buildAuthHeaders());
+            Boolean result = restTemplate.exchange(url, HttpMethod.GET, request, Boolean.class).getBody();
+            return Boolean.TRUE.equals(result);
+        } catch (HttpClientErrorException.NotFound e) {
+            return false;
+        } catch (ResourceAccessException e) {
+            throw new TechnicalException(TechnicalMessageConstants.USER_VALIDATION_UNAVAILABLE);
+        }
+    }
+
+    @Override
+    public boolean isEmployee(Long userId) {
+        try {
+            String url = usersServiceUrl + String.format(ENDPOINT_USER_IS_EMPLOYEE, userId);
             HttpEntity<Void> request = new HttpEntity<>(buildAuthHeaders());
             Boolean result = restTemplate.exchange(url, HttpMethod.GET, request, Boolean.class).getBody();
             return Boolean.TRUE.equals(result);

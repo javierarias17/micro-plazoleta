@@ -1,13 +1,7 @@
 package com.pragma.powerup.infrastructure.exceptionhandler;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.pragma.powerup.domain.exception.CategoryNotFoundException;
-import com.pragma.powerup.domain.exception.DishNotFoundException;
-import com.pragma.powerup.domain.exception.FunctionalException;
-import com.pragma.powerup.domain.exception.OwnerNotAuthorizedException;
-import com.pragma.powerup.domain.exception.OwnerNotFoundException;
-import com.pragma.powerup.domain.exception.RestaurantNotFoundException;
-import com.pragma.powerup.domain.exception.TechnicalException;
+import com.pragma.powerup.domain.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,6 +72,12 @@ public class ControllerAdvisor {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @ExceptionHandler(FieldsValidationException.class)
+    public ResponseEntity<Map<String, Object>> handleFieldsValidationException(
+            FieldsValidationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(buildErrorResponse(ex));
+    }
+
     @ExceptionHandler(OwnerNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleOwnerNotFoundException(OwnerNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildErrorResponse(ex));
@@ -101,6 +101,16 @@ public class ControllerAdvisor {
     @ExceptionHandler(OwnerNotAuthorizedException.class)
     public ResponseEntity<Map<String, Object>> handleOwnerNotAuthorizedException(OwnerNotAuthorizedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(buildErrorResponse(ex));
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Map<String, Object>> handleForbiddenException(ForbiddenException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(buildErrorResponse(ex));
+    }
+
+    @ExceptionHandler(EmployeeAlreadyLinkedException.class)
+    public ResponseEntity<Map<String, Object>> handleEmployeeAlreadyLinkedException(EmployeeAlreadyLinkedException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(ex));
     }
 
     private Map<String, Object> buildErrorResponse(FunctionalException ex) {

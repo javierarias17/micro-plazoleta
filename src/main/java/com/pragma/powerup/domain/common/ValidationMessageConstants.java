@@ -26,6 +26,7 @@ public class ValidationMessageConstants {
 
     // IDs
     public static final String MSG_OWNER_ID_REQUIRED = "Owner ID is required";
+    public static final String MSG_EMPLOYEE_ID_REQUIRED = "Employee ID is required";
     public static final String MSG_CATEGORY_ID_REQUIRED = "Category ID is required";
     public static final String MSG_RESTAURANT_ID_REQUIRED = "Restaurant ID is required";
 

@@ -1,11 +1,13 @@
 package com.pragma.powerup.infrastructure.input.rest;
 
+import com.pragma.powerup.application.dto.request.EmployeeLinkRequestDto;
 import com.pragma.powerup.application.dto.request.RestaurantRequestDto;
 import com.pragma.powerup.application.dto.response.RestaurantResponseDto;
 import com.pragma.powerup.application.handler.IRestaurantHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,5 +28,13 @@ public class RestaurantRestController implements IRestaurantRestControllerDocs {
             @Valid @RequestBody RestaurantRequestDto restaurantRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(restaurantHandler.createRestaurant(restaurantRequestDto));
+    }
+
+    @Override
+    @PostMapping("/{restaurantId}/employee")
+    public ResponseEntity<Void> linkEmployee(@PathVariable Long restaurantId,
+                                             @Valid @RequestBody EmployeeLinkRequestDto employeeLinkRequestDto) {
+        restaurantHandler.linkEmployee(restaurantId, employeeLinkRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

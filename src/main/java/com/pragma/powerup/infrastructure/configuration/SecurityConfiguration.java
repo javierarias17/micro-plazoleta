@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration {
 
     private static final String ENDPOINT_RESTAURANT_CREATE = "/api/v1/restaurant";
+    private static final String ENDPOINT_RESTAURANT_LINK_EMPLOYEE = "/api/v1/restaurant/*/employee";
     private static final String ENDPOINT_DISH_CREATE = "/api/v1/dish";
     private static final String ENDPOINT_DISH_UPDATE = "/api/v1/dish/**";
 
@@ -48,6 +49,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .antMatchers(SWAGGER_API_DOCS_PATH, SWAGGER_UI_PATH, SWAGGER_HTML_PATH).permitAll()
                         .antMatchers(HttpMethod.POST, ENDPOINT_RESTAURANT_CREATE).hasRole(ROLE_ADMIN)
+                        .antMatchers(HttpMethod.POST, ENDPOINT_RESTAURANT_LINK_EMPLOYEE).hasRole(ROLE_OWNER)
                         .antMatchers(HttpMethod.POST, ENDPOINT_DISH_CREATE).hasRole(ROLE_OWNER)
                         .antMatchers(HttpMethod.PATCH, ENDPOINT_DISH_UPDATE).hasRole(ROLE_OWNER)
                         .anyRequest().authenticated())
