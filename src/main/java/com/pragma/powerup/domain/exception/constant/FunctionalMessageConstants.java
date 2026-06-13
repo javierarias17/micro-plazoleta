@@ -15,4 +15,6 @@ public class FunctionalMessageConstants {
     public static final String CATEGORY_NOT_FOUND = "The category does not exist";
     public static final String DISH_NOT_FOUND = "The dish does not exist";
     public static final String EMPLOYEE_ALREADY_LINKED = "This employee is already linked to a restaurant";
+    public static final String PAGE_MUST_BE_ZERO_OR_POSITIVE = "Page number must be zero or positive";
+    public static final String PAGE_SIZE_MUST_BE_POSITIVE = "Page size must be a positive number";
 }

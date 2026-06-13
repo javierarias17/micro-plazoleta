@@ -1,12 +1,18 @@
 package com.pragma.powerup.infrastructure.out.jpa.adapter;
 
+import com.pragma.powerup.domain.model.PagedResult;
 import com.pragma.powerup.domain.model.RestaurantModel;
 import com.pragma.powerup.domain.spi.IRestaurantPersistencePort;
+import com.pragma.powerup.infrastructure.out.jpa.dto.RestaurantSummaryDto;
 import com.pragma.powerup.infrastructure.out.jpa.mapper.IRestaurantEntityMapper;
 import com.pragma.powerup.infrastructure.out.jpa.repository.IRestaurantRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
@@ -24,5 +30,25 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     public Optional<RestaurantModel> findRestaurantById(Long id) {
         return restaurantRepository.findById(id)
                 .map(restaurantEntityMapper::toRestaurantModel);
+    }
+
+    @Override
+    public PagedResult<RestaurantModel> findAllSortedByName(int page, int pageSize) {
+        Page<RestaurantSummaryDto> dtoPage =
+                restaurantRepository.findSummaryOrderByName(PageRequest.of(page, pageSize));
+        List<RestaurantModel> content = dtoPage.stream()
+                .map(dto -> RestaurantModel.builder()
+                        .id(dto.getId())
+                        .name(dto.getName())
+                        .urlLogo(dto.getUrlLogo())
+                        .build())
+                .collect(Collectors.toList());
+        return PagedResult.<RestaurantModel>builder()
+                .content(content)
+                .totalElements(dtoPage.getTotalElements())
+                .totalPages(dtoPage.getTotalPages())
+                .currentPage(dtoPage.getNumber())
+                .pageSize(dtoPage.getSize())
+                .build();
     }
 }
