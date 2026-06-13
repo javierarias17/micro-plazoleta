@@ -79,7 +79,7 @@ class LinkEmployeeUseCaseTest {
         assertEquals(EMPLOYEE_ID, result.getEmployeeId());
     }
 
-    // ─── Field validation exceptions
+    // ─── Exceptions path
 
     @Test
     void Expect_FieldsValidationException_When_RestaurantIdIsNull() {
@@ -101,8 +101,6 @@ class LinkEmployeeUseCaseTest {
         assertThrows(FieldsValidationException.class,
                 () -> linkEmployeeUseCase.linkEmployee(null, null));
     }
-
-    // ─── Business rule exceptions
 
     @Test
     void Expect_RestaurantNotFoundException_When_RestaurantDoesNotExist() {

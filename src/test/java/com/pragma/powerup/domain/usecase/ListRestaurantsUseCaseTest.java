@@ -64,10 +64,10 @@ class ListRestaurantsUseCaseTest {
         assertEquals(3, result.getPageSize());
     }
 
-    // ─── Validation
+    // ─── Exception path
 
     @Test
-    void When_NegativePage_Expect_FieldsValidationException() {
+    void Expect_FieldsValidationException_When_NegativePage() {
         FieldsValidationException ex = assertThrows(FieldsValidationException.class,
                 () -> listRestaurantsUseCase.listRestaurants(-1, 10));
 
@@ -75,7 +75,7 @@ class ListRestaurantsUseCaseTest {
     }
 
     @Test
-    void When_ZeroPageSize_Expect_FieldsValidationException() {
+    void Expect_FieldsValidationException_When_ZeroPageSize() {
         FieldsValidationException ex = assertThrows(FieldsValidationException.class,
                 () -> listRestaurantsUseCase.listRestaurants(0, 0));
 
@@ -83,7 +83,7 @@ class ListRestaurantsUseCaseTest {
     }
 
     @Test
-    void When_NegativePageSize_Expect_FieldsValidationException() {
+    void Expect_FieldsValidationException_When_NegativePageSize() {
         FieldsValidationException ex = assertThrows(FieldsValidationException.class,
                 () -> listRestaurantsUseCase.listRestaurants(0, -5));
 
@@ -91,7 +91,7 @@ class ListRestaurantsUseCaseTest {
     }
 
     @Test
-    void When_NegativePageAndZeroPageSize_Expect_BothErrorsReturned() {
+    void Expect_FieldsValidationException_When_NegativePageAndZeroPageSize() {
         FieldsValidationException ex = assertThrows(FieldsValidationException.class,
                 () -> listRestaurantsUseCase.listRestaurants(-1, 0));
 
