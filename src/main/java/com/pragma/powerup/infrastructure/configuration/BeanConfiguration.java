@@ -3,6 +3,7 @@ package com.pragma.powerup.infrastructure.configuration;
 import com.pragma.powerup.domain.api.ICreateDishServicePort;
 import com.pragma.powerup.domain.api.ICreateRestaurantServicePort;
 import com.pragma.powerup.domain.api.ILinkEmployeeServicePort;
+import com.pragma.powerup.domain.api.IListDishesServicePort;
 import com.pragma.powerup.domain.api.IListRestaurantsServicePort;
 import com.pragma.powerup.domain.api.IUpdateDishServicePort;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
@@ -14,6 +15,7 @@ import com.pragma.powerup.domain.spi.IUserValidationPort;
 import com.pragma.powerup.domain.usecase.CreateDishUseCase;
 import com.pragma.powerup.domain.usecase.CreateRestaurantUseCase;
 import com.pragma.powerup.domain.usecase.LinkEmployeeUseCase;
+import com.pragma.powerup.domain.usecase.ListDishesUseCase;
 import com.pragma.powerup.domain.usecase.ListRestaurantsUseCase;
 import com.pragma.powerup.domain.usecase.UpdateDishUseCase;
 import com.pragma.powerup.infrastructure.out.http.adapter.UserValidationAdapter;
@@ -102,6 +104,11 @@ public class BeanConfiguration {
     @Bean
     public IUpdateDishServicePort updateDishServicePort() {
         return new UpdateDishUseCase(dishPersistencePort(), restaurantPersistencePort(), authenticatedUserPort);
+    }
+
+    @Bean
+    public IListDishesServicePort listDishesServicePort() {
+        return new ListDishesUseCase(dishPersistencePort(), restaurantPersistencePort());
     }
 
     @Bean

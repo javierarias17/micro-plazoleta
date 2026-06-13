@@ -25,6 +25,7 @@ public class SecurityConfiguration {
     private static final String ENDPOINT_RESTAURANT_LINK_EMPLOYEE = "/api/v1/restaurant/*/employee";
     private static final String ENDPOINT_DISH_CREATE = "/api/v1/dish";
     private static final String ENDPOINT_DISH_UPDATE = "/api/v1/dish/**";
+    private static final String ENDPOINT_DISH_LIST = "/api/v1/dish/restaurant/*";
 
     private static final String SWAGGER_API_DOCS_PATH = "/v3/api-docs/**";
     private static final String SWAGGER_UI_PATH = "/swagger-ui/**";
@@ -51,6 +52,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .antMatchers(SWAGGER_API_DOCS_PATH, SWAGGER_UI_PATH, SWAGGER_HTML_PATH).permitAll()
                         .antMatchers(HttpMethod.GET, ENDPOINT_RESTAURANT_LIST).hasRole(ROLE_CUSTOMER)
+                        .antMatchers(HttpMethod.GET, ENDPOINT_DISH_LIST).hasRole(ROLE_CUSTOMER)
                         .antMatchers(HttpMethod.POST, ENDPOINT_RESTAURANT_CREATE).hasRole(ROLE_ADMIN)
                         .antMatchers(HttpMethod.POST, ENDPOINT_RESTAURANT_LINK_EMPLOYEE).hasRole(ROLE_OWNER)
                         .antMatchers(HttpMethod.POST, ENDPOINT_DISH_CREATE).hasRole(ROLE_OWNER)
