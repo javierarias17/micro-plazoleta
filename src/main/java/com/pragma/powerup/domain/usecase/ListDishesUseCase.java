@@ -15,6 +15,9 @@ import java.util.Map;
 
 public class ListDishesUseCase implements IListDishesServicePort {
 
+    private static final int MIN_PAGE = 0;
+    private static final int MIN_PAGE_SIZE = 1;
+
     private final IDishPersistencePort dishPersistencePort;
     private final IRestaurantPersistencePort restaurantPersistencePort;
 
@@ -36,9 +39,9 @@ public class ListDishesUseCase implements IListDishesServicePort {
 
     private void validatePaginationParams(int page, int pageSize) {
         Map<String, String> errors = new LinkedHashMap<>();
-        if (page < 0)
+        if (page < MIN_PAGE)
             errors.put(FieldConstants.PAGE, FunctionalMessageConstants.PAGE_MUST_BE_ZERO_OR_POSITIVE);
-        if (pageSize <= 0)
+        if (pageSize < MIN_PAGE_SIZE)
             errors.put(FieldConstants.PAGE_SIZE, FunctionalMessageConstants.PAGE_SIZE_MUST_BE_POSITIVE);
         if (!errors.isEmpty())
             throw new FieldsValidationException(errors);

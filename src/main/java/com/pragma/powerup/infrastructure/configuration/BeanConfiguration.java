@@ -5,6 +5,7 @@ import com.pragma.powerup.domain.api.ICreateOrderServicePort;
 import com.pragma.powerup.domain.api.ICreateRestaurantServicePort;
 import com.pragma.powerup.domain.api.ILinkEmployeeServicePort;
 import com.pragma.powerup.domain.api.IListDishesServicePort;
+import com.pragma.powerup.domain.api.IListOrdersServicePort;
 import com.pragma.powerup.domain.api.IListRestaurantsServicePort;
 import com.pragma.powerup.domain.api.IUpdateDishServicePort;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
@@ -19,6 +20,7 @@ import com.pragma.powerup.domain.usecase.CreateOrderUseCase;
 import com.pragma.powerup.domain.usecase.CreateRestaurantUseCase;
 import com.pragma.powerup.domain.usecase.LinkEmployeeUseCase;
 import com.pragma.powerup.domain.usecase.ListDishesUseCase;
+import com.pragma.powerup.domain.usecase.ListOrdersUseCase;
 import com.pragma.powerup.domain.usecase.ListRestaurantsUseCase;
 import com.pragma.powerup.domain.usecase.UpdateDishUseCase;
 import com.pragma.powerup.infrastructure.out.http.adapter.UserValidationAdapter;
@@ -137,5 +139,10 @@ public class BeanConfiguration {
     @Bean
     public ICreateOrderServicePort createOrderServicePort() {
         return new CreateOrderUseCase(orderPersistencePort(), restaurantPersistencePort(), dishPersistencePort(), authenticatedUserPort);
+    }
+
+    @Bean
+    public IListOrdersServicePort listOrdersServicePort() {
+        return new ListOrdersUseCase(orderPersistencePort(), restaurantEmployeePersistencePort(), authenticatedUserPort);
     }
 }

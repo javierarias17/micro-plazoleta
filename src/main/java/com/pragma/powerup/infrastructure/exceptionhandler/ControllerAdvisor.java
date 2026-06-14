@@ -6,7 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -24,12 +26,22 @@ public class ControllerAdvisor {
     private static final String ERRORS = "errors";
     private static final String FIELD = "field";
     private static final String MESSAGE = "message";
+    private static final String INVALID_FIELD_VALUE_TYPE = "Invalid value for field, expected type %s";
+    private static final String REQUIRED_PARAM_MISSING = "Required parameter '%s' is missing";
+    private static final String INVALID_PARAM_VALUE_TYPE = "Invalid value '%s', expected type %s";
+    private static final String METHOD_NOT_ALLOWED_MSG = "HTTP method not allowed for this endpoint";
+    private static final String NONE = "none";
+    private static final String LOG_TECHNICAL_ERROR = "Technical error: {}";
+    private static final String LOG_UNEXPECTED_ERROR = "Unexpected error";
 
     // region Pre-controller — thrown before the request reaches the controller
 
     /**
      * Thrown by Jackson when deserializing the {@code @RequestBody}.
-     * <p>e.g. malformed JSON, or a field value that cannot be converted to the expected type.</p>
+     * <p>
+     * e.g. malformed JSON, or a field value that cannot be converted to the
+     * expected type.
+     * </p>
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String, Object>> handleHttpMessageNotReadableException(
@@ -45,7 +57,7 @@ public class ControllerAdvisor {
 
             Map<String, String> detail = new LinkedHashMap<>();
             detail.put(FIELD, fieldName);
-            detail.put(MESSAGE, "Invalid value for field, expected type " + expectedType);
+            detail.put(MESSAGE, String.format(INVALID_FIELD_VALUE_TYPE, expectedType));
 
             Map<String, Object> response = new LinkedHashMap<>();
             response.put(MESSAGE, INVALID_REQUEST_BODY);
@@ -59,21 +71,46 @@ public class ControllerAdvisor {
     }
 
     /**
+     * Thrown by Spring MVC when a required {@code @RequestParam} is missing from
+     * the request.
+     * <p>
+     * e.g. {@code GET /order} without providing the {@code status} parameter.
+     * </p>
+     */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<Map<String, Object>> handleMissingServletRequestParameter(
+            MissingServletRequestParameterException ex) {
+
+        Map<String, String> detail = new LinkedHashMap<>();
+        detail.put(FIELD, ex.getParameterName());
+        detail.put(MESSAGE, String.format(REQUIRED_PARAM_MISSING, ex.getParameterName()));
+
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put(MESSAGE, INVALID_REQUEST_PARAMETER);
+        response.put(ERRORS, Collections.singletonList(detail));
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    /**
      * Thrown by Spring MVC during parameter binding when a {@code @RequestParam},
      * {@code @PathVariable} or {@code @RequestHeader} value cannot be converted
      * to the declared Java type (int, Long, UUID, enum, etc.).
-     * <p>e.g. {@code GET /restaurant?page=abc} where {@code page} is declared as {@code int}.</p>
+     * <p>
+     * e.g. {@code GET /restaurant?page=abc} where {@code page} is declared as
+     * {@code int}.
+     * </p>
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Map<String, Object>> handleMethodArgumentTypeMismatch(
             MethodArgumentTypeMismatchException ex) {
 
         Class<?> requiredType = ex.getRequiredType();
-        String expectedType = requiredType != null ? requiredType.getSimpleName() : "unknown";
+        String expectedType = requiredType != null ? requiredType.getSimpleName() : NONE;
 
         Map<String, String> detail = new LinkedHashMap<>();
         detail.put(FIELD, ex.getName());
-        detail.put(MESSAGE, "Invalid value '" + ex.getValue() + "', expected type " + expectedType);
+        detail.put(MESSAGE, String.format(INVALID_PARAM_VALUE_TYPE, ex.getValue(), expectedType));
 
         Map<String, Object> response = new LinkedHashMap<>();
         response.put(MESSAGE, INVALID_REQUEST_PARAMETER);
@@ -87,7 +124,8 @@ public class ControllerAdvisor {
     // region Controller — thrown during controller-level validation
 
     /**
-     * Thrown when the controller triggers Bean Validation via {@code @Valid} on a {@code @RequestBody}
+     * Thrown when the controller triggers Bean Validation via {@code @Valid} on a
+     * {@code @RequestBody}
      * and one or more fields in the DTO fail their constraints
      * ({@code @NotBlank}, {@code @Size}, {@code @Pattern}, etc.).
      */
@@ -159,7 +197,8 @@ public class ControllerAdvisor {
     }
 
     @ExceptionHandler(CustomerHasActiveOrderException.class)
-    public ResponseEntity<Map<String, Object>> handleCustomerHasActiveOrderException(CustomerHasActiveOrderException ex) {
+    public ResponseEntity<Map<String, Object>> handleCustomerHasActiveOrderException(
+            CustomerHasActiveOrderException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(ex));
     }
 
@@ -168,15 +207,31 @@ public class ControllerAdvisor {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(buildErrorResponse(ex));
     }
 
+    @ExceptionHandler(EmployeeNotLinkedToRestaurantException.class)
+    public ResponseEntity<Map<String, Object>> handleEmployeeNotLinkedToRestaurantException(
+            EmployeeNotLinkedToRestaurantException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(buildErrorResponse(ex));
+    }
+
     // endregion
 
     // region Infrastructure — technical and unexpected errors
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Map<String, Object>> handleHttpRequestMethodNotSupported(
+            HttpRequestMethodNotSupportedException ex) {
+
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put(MESSAGE, METHOD_NOT_ALLOWED_MSG);
+
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(response);
+    }
 
     @ExceptionHandler(TechnicalException.class)
     public ResponseEntity<Map<String, Object>> handleTechnicalException(
             TechnicalException ex) {
 
-        log.error("Technical error: {}", ex.getMessage(), ex);
+        log.error(LOG_TECHNICAL_ERROR, ex.getMessage(), ex);
 
         Map<String, Object> response = new LinkedHashMap<>();
         response.put(MESSAGE, AN_UNEXPECTED_ERROR_OCCURRED);
@@ -189,7 +244,7 @@ public class ControllerAdvisor {
     public ResponseEntity<Map<String, Object>> handleUnexpectedException(
             Exception ex) {
 
-        log.error("Unexpected error", ex);
+        log.error(LOG_UNEXPECTED_ERROR, ex);
 
         Map<String, Object> response = new LinkedHashMap<>();
         response.put(MESSAGE, AN_UNEXPECTED_ERROR_OCCURRED);

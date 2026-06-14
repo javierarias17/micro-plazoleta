@@ -1,5 +1,6 @@
 package com.pragma.powerup.domain.usecase;
 
+import com.pragma.powerup.domain.common.FieldConstants;
 import com.pragma.powerup.domain.exception.FieldsValidationException;
 import com.pragma.powerup.domain.model.PagedResult;
 import com.pragma.powerup.domain.model.RestaurantModel;
@@ -71,7 +72,7 @@ class ListRestaurantsUseCaseTest {
         FieldsValidationException ex = assertThrows(FieldsValidationException.class,
                 () -> listRestaurantsUseCase.listRestaurants(-1, 10));
 
-        assertTrue(ex.getErrors().containsKey("page"));
+        assertTrue(ex.getErrors().containsKey(FieldConstants.PAGE));
     }
 
     @Test
@@ -79,7 +80,7 @@ class ListRestaurantsUseCaseTest {
         FieldsValidationException ex = assertThrows(FieldsValidationException.class,
                 () -> listRestaurantsUseCase.listRestaurants(0, 0));
 
-        assertTrue(ex.getErrors().containsKey("pageSize"));
+        assertTrue(ex.getErrors().containsKey(FieldConstants.PAGE_SIZE));
     }
 
     @Test
@@ -87,7 +88,7 @@ class ListRestaurantsUseCaseTest {
         FieldsValidationException ex = assertThrows(FieldsValidationException.class,
                 () -> listRestaurantsUseCase.listRestaurants(0, -5));
 
-        assertTrue(ex.getErrors().containsKey("pageSize"));
+        assertTrue(ex.getErrors().containsKey(FieldConstants.PAGE_SIZE));
     }
 
     @Test
@@ -95,8 +96,8 @@ class ListRestaurantsUseCaseTest {
         FieldsValidationException ex = assertThrows(FieldsValidationException.class,
                 () -> listRestaurantsUseCase.listRestaurants(-1, 0));
 
-        assertTrue(ex.getErrors().containsKey("page"));
-        assertTrue(ex.getErrors().containsKey("pageSize"));
+        assertTrue(ex.getErrors().containsKey(FieldConstants.PAGE));
+        assertTrue(ex.getErrors().containsKey(FieldConstants.PAGE_SIZE));
         assertEquals(2, ex.getErrors().size());
     }
 }

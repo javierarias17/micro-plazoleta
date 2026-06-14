@@ -19,4 +19,5 @@ public class FunctionalMessageConstants {
     public static final String PAGE_SIZE_MUST_BE_POSITIVE = "Page size must be a positive number";
     public static final String CUSTOMER_HAS_ACTIVE_ORDER = "You already have an order in process. You cannot place a new order until it is completed or cancelled";
     public static final String DISH_NOT_AVAILABLE = "One or more dishes are not available or do not exist";
+    public static final String EMPLOYEE_NOT_LINKED_TO_RESTAURANT = "The employee is not linked to any restaurant";
 }
