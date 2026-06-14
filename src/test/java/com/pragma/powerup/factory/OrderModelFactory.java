@@ -1,0 +1,43 @@
+package com.pragma.powerup.factory;
+
+import com.pragma.powerup.domain.model.OrderDishModel;
+import com.pragma.powerup.domain.model.OrderModel;
+import com.pragma.powerup.domain.model.OrderStatus;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public class OrderModelFactory {
+
+    private OrderModelFactory() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    public static OrderModel createValidOrderRequest() {
+        return OrderModel.builder()
+                .restaurantId(1L)
+                .dishes(List.of(
+                        OrderDishModel.builder().dishId(1L).quantity(2).build(),
+                        OrderDishModel.builder().dishId(2L).quantity(1).build()
+                ))
+                .build();
+    }
+
+    public static OrderModel createSavedOrder() {
+        return OrderModel.builder()
+                .id(1L)
+                .clientId(10L)
+                .date(LocalDate.now())
+                .status(OrderStatus.PENDIENTE)
+                .restaurantId(1L)
+                .dishes(List.of(
+                        OrderDishModel.builder().dishId(1L).quantity(2).build(),
+                        OrderDishModel.builder().dishId(2L).quantity(1).build()
+                ))
+                .build();
+    }
+
+    public static List<Long> createActiveDishIdsForRestaurant() {
+        return List.of(1L, 2L);
+    }
+}
