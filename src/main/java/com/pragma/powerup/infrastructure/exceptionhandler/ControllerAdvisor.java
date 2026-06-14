@@ -158,6 +158,16 @@ public class ControllerAdvisor {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(ex));
     }
 
+    @ExceptionHandler(CustomerHasActiveOrderException.class)
+    public ResponseEntity<Map<String, Object>> handleCustomerHasActiveOrderException(CustomerHasActiveOrderException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(ex));
+    }
+
+    @ExceptionHandler(DishNotFromRestaurantException.class)
+    public ResponseEntity<Map<String, Object>> handleDishNotFromRestaurantException(DishNotFromRestaurantException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(buildErrorResponse(ex));
+    }
+
     // endregion
 
     // region Infrastructure — technical and unexpected errors

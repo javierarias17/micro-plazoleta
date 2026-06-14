@@ -35,4 +35,10 @@ public class ValidationMessageConstants {
     public static final String MSG_PRICE_REQUIRED = "Price is required";
     public static final String MSG_PRICE_POSITIVE = "Price must be a positive number";
     public static final String MSG_IMAGE_URL_REQUIRED = "Image URL is required";
+
+    // Order
+    public static final String MSG_DISHES_REQUIRED = "The order must contain at least one dish";
+    public static final String MSG_DISH_ID_REQUIRED = "Dish ID is required";
+    public static final String MSG_QUANTITY_REQUIRED = "Quantity is required";
+    public static final String MSG_QUANTITY_POSITIVE = "Quantity must be a positive number";
 }

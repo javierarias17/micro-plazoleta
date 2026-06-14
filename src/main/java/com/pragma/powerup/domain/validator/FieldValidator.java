@@ -28,4 +28,10 @@ public class FieldValidator {
         if (value == null)
             errors.put(field, message);
     }
+
+    public static void validatePositive(Number value, String field, String message,
+                                        Map<String, String> errors) {
+        if (value != null && value.doubleValue() <= 0)
+            errors.put(field, message);
+    }
 }

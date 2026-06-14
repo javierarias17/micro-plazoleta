@@ -21,4 +21,7 @@ public class FieldConstants {
     public static final String URL_IMAGE = "urlImage";
     public static final String PAGE = "page";
     public static final String PAGE_SIZE = "pageSize";
+    public static final String CLIENT_ID = "clientId";
+    public static final String DISHES = "dishes";
+    public static final String QUANTITY = "quantity";
 }

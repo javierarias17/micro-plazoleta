@@ -17,4 +17,6 @@ public class FunctionalMessageConstants {
     public static final String EMPLOYEE_ALREADY_LINKED = "This employee is already linked to a restaurant";
     public static final String PAGE_MUST_BE_ZERO_OR_POSITIVE = "Page number must be zero or positive";
     public static final String PAGE_SIZE_MUST_BE_POSITIVE = "Page size must be a positive number";
+    public static final String CUSTOMER_HAS_ACTIVE_ORDER = "You already have an order in process. You cannot place a new order until it is completed or cancelled";
+    public static final String DISH_NOT_AVAILABLE = "One or more dishes are not available or do not exist";
 }

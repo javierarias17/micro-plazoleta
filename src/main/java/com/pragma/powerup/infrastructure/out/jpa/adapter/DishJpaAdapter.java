@@ -50,4 +50,9 @@ public class DishJpaAdapter implements IDishPersistencePort {
         return new PagedResult<>(content, dishPage.getTotalElements(),
                 dishPage.getTotalPages(), dishPage.getNumber(), dishPage.getSize());
     }
+
+    @Override
+    public List<Long> findActiveDishesByIdsAndRestaurant(List<Long> ids, Long restaurantId) {
+        return dishRepository.findIdsByIdInAndRestaurantIdAndActiveTrue(ids, restaurantId);
+    }
 }
