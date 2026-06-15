@@ -18,6 +18,7 @@ import com.pragma.powerup.domain.spi.IRestaurantPersistencePort;
 import com.pragma.powerup.domain.validator.FieldValidator;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class CreateOrderUseCase implements ICreateOrderServicePort {
         this.validateBusinessRules(orderModel, clientId);
         
         orderModel.setClientId(clientId);
-        orderModel.setDate(LocalDate.now());
+        orderModel.setDate(LocalDate.now(ZoneId.systemDefault()));
         orderModel.setStatus(OrderStatus.PENDIENTE);
 
         return orderPersistencePort.saveOrder(orderModel);

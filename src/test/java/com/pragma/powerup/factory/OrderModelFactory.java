@@ -6,6 +6,7 @@ import com.pragma.powerup.domain.model.OrderStatus;
 import com.pragma.powerup.domain.model.PagedResult;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 
 public class OrderModelFactory {
@@ -28,7 +29,7 @@ public class OrderModelFactory {
         return OrderModel.builder()
                 .id(1L)
                 .clientId(10L)
-                .date(LocalDate.now())
+                .date(LocalDate.of(2024, Month.JANUARY, 1))
                 .status(OrderStatus.PENDIENTE)
                 .restaurantId(1L)
                 .dishes(List.of(
@@ -44,9 +45,9 @@ public class OrderModelFactory {
 
     public static PagedResult<OrderModel> createOrderPagedResult() {
         List<OrderModel> orders = List.of(
-                OrderModel.builder().id(1L).clientId(10L).date(LocalDate.now())
+                OrderModel.builder().id(1L).clientId(10L).date(LocalDate.of(2024, Month.JANUARY, 1))
                         .status(OrderStatus.PENDIENTE).restaurantId(1L).build(),
-                OrderModel.builder().id(2L).clientId(11L).date(LocalDate.now())
+                OrderModel.builder().id(2L).clientId(11L).date(LocalDate.of(2024, Month.JANUARY, 1))
                         .status(OrderStatus.PENDIENTE).restaurantId(1L).build()
         );
         return PagedResult.<OrderModel>builder()
