@@ -7,6 +7,7 @@ import com.pragma.powerup.domain.api.ILinkEmployeeServicePort;
 import com.pragma.powerup.domain.api.IListDishesServicePort;
 import com.pragma.powerup.domain.api.IListOrdersServicePort;
 import com.pragma.powerup.domain.api.IListRestaurantsServicePort;
+import com.pragma.powerup.domain.api.IToggleDishStatusServicePort;
 import com.pragma.powerup.domain.api.IUpdateDishServicePort;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.ICategoryPersistencePort;
@@ -22,6 +23,7 @@ import com.pragma.powerup.domain.usecase.LinkEmployeeUseCase;
 import com.pragma.powerup.domain.usecase.ListDishesUseCase;
 import com.pragma.powerup.domain.usecase.ListOrdersUseCase;
 import com.pragma.powerup.domain.usecase.ListRestaurantsUseCase;
+import com.pragma.powerup.domain.usecase.ToggleDishStatusUseCase;
 import com.pragma.powerup.domain.usecase.UpdateDishUseCase;
 import com.pragma.powerup.infrastructure.out.http.adapter.UserValidationAdapter;
 import com.pragma.powerup.infrastructure.out.jpa.adapter.CategoryJpaAdapter;
@@ -108,7 +110,8 @@ public class BeanConfiguration {
 
     @Bean
     public ICreateDishServicePort createDishServicePort() {
-        return new CreateDishUseCase(dishPersistencePort(), restaurantPersistencePort(), categoryPersistencePort(), authenticatedUserPort);
+        return new CreateDishUseCase(dishPersistencePort(), restaurantPersistencePort(), categoryPersistencePort(),
+                authenticatedUserPort);
     }
 
     @Bean
@@ -122,13 +125,19 @@ public class BeanConfiguration {
     }
 
     @Bean
+    public IToggleDishStatusServicePort toggleDishStatusServicePorts() {
+        return new ToggleDishStatusUseCase(dishPersistencePort(), restaurantPersistencePort(), authenticatedUserPort);
+    }
+
+    @Bean
     public IRestaurantEmployeePersistencePort restaurantEmployeePersistencePort() {
         return new RestaurantEmployeeJpaAdapter(restaurantEmployeeRepository, restaurantEmployeeEntityMapper);
     }
 
     @Bean
     public ILinkEmployeeServicePort linkEmployeeServicePort() {
-        return new LinkEmployeeUseCase(restaurantPersistencePort(), restaurantEmployeePersistencePort(), userValidationPort(), authenticatedUserPort);
+        return new LinkEmployeeUseCase(restaurantPersistencePort(), restaurantEmployeePersistencePort(),
+                userValidationPort(), authenticatedUserPort);
     }
 
     @Bean
@@ -138,11 +147,13 @@ public class BeanConfiguration {
 
     @Bean
     public ICreateOrderServicePort createOrderServicePort() {
-        return new CreateOrderUseCase(orderPersistencePort(), restaurantPersistencePort(), dishPersistencePort(), authenticatedUserPort);
+        return new CreateOrderUseCase(orderPersistencePort(), restaurantPersistencePort(), dishPersistencePort(),
+                authenticatedUserPort);
     }
 
     @Bean
     public IListOrdersServicePort listOrdersServicePort() {
-        return new ListOrdersUseCase(orderPersistencePort(), restaurantEmployeePersistencePort(), authenticatedUserPort);
+        return new ListOrdersUseCase(orderPersistencePort(), restaurantEmployeePersistencePort(),
+                authenticatedUserPort);
     }
 }

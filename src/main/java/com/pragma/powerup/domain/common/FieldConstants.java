@@ -24,4 +24,5 @@ public class FieldConstants {
     public static final String CLIENT_ID = "clientId";
     public static final String DISHES = "dishes";
     public static final String QUANTITY = "quantity";
+    public static final String ACTIVE = "active";
 }
