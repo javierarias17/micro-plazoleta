@@ -29,6 +29,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ToggleDishStatusUseCaseTest {
 
+    private static final long VALID_DISH_ID = 1L;
+    private static final long OTHER_ID = 99L;
+
     @Mock
     private IDishPersistencePort dishPersistencePort;
 
@@ -104,7 +107,7 @@ class ToggleDishStatusUseCaseTest {
     @Test
     void Expect_FieldsValidationException_When_ActiveIsNull() {
         assertThrows(FieldsValidationException.class,
-                () -> toggleDishStatusUseCase.toggleDishStatus(1L, null));
+                () -> toggleDishStatusUseCase.toggleDishStatus(VALID_DISH_ID, null));
     }
 
     @Test
@@ -116,11 +119,11 @@ class ToggleDishStatusUseCaseTest {
     @Test
     void Expect_DishNotFoundException_When_DishDoesNotExist() {
         // Arrange
-        when(dishPersistencePort.findDishById(99L)).thenReturn(Optional.empty());
+        when(dishPersistencePort.findDishById(OTHER_ID)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(DishNotFoundException.class,
-                () -> toggleDishStatusUseCase.toggleDishStatus(99L, false));
+                () -> toggleDishStatusUseCase.toggleDishStatus(OTHER_ID, false));
     }
 
     @Test
@@ -129,7 +132,7 @@ class ToggleDishStatusUseCaseTest {
         when(dishPersistencePort.findDishById(savedDish.getId())).thenReturn(Optional.of(savedDish));
         when(restaurantPersistencePort.findRestaurantById(savedDish.getRestaurantId()))
                 .thenReturn(Optional.of(savedRestaurant));
-        when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(99L);
+        when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(OTHER_ID);
 
         // Act & Assert
         assertThrows(ForbiddenException.class,
