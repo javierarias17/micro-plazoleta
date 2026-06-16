@@ -34,7 +34,7 @@ public class ListOrdersUseCase implements IListOrdersServicePort {
 
     @Override
     public PagedResult<OrderModel> listOrders(OrderStatus status, int page, int pageSize) {
-        validatePaginationParams(page, pageSize);
+        this.validatePaginationParams(page, pageSize);
 
         Long employeeId = authenticatedUserPort.getAuthenticatedUserId();
 

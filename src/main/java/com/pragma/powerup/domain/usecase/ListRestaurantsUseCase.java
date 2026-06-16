@@ -24,7 +24,7 @@ public class ListRestaurantsUseCase implements IListRestaurantsServicePort {
 
     @Override
     public PagedResult<RestaurantModel> listRestaurants(int page, int pageSize) {
-        validatePaginationParams(page, pageSize);
+        this.validatePaginationParams(page, pageSize);
         return restaurantPersistencePort.findAllSortedByName(page, pageSize);
     }
 

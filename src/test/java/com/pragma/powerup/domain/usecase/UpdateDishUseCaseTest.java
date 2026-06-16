@@ -1,6 +1,7 @@
 package com.pragma.powerup.domain.usecase;
 
 import com.pragma.powerup.domain.exception.DishNotFoundException;
+import com.pragma.powerup.domain.exception.FieldsValidationException;
 import com.pragma.powerup.domain.exception.OwnerNotAuthorizedException;
 import com.pragma.powerup.domain.model.DishModel;
 import com.pragma.powerup.domain.model.RestaurantModel;
@@ -61,7 +62,8 @@ class UpdateDishUseCaseTest {
         updatedDish.setDescription(newDescription);
 
         when(dishPersistencePort.findDishById(savedDish.getId())).thenReturn(Optional.of(savedDish));
-        when(restaurantPersistencePort.findRestaurantById(savedDish.getRestaurantId())).thenReturn(Optional.of(savedRestaurant));
+        when(restaurantPersistencePort.findRestaurantById(savedDish.getRestaurantId()))
+                .thenReturn(Optional.of(savedRestaurant));
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(savedRestaurant.getOwnerId());
         when(dishPersistencePort.updateDish(any(DishModel.class))).thenReturn(updatedDish);
 
@@ -77,6 +79,27 @@ class UpdateDishUseCaseTest {
     // ─── Exceptions path
 
     @Test
+    void Expect_FieldsValidationException_When_PriceIsNull() {
+        // Act & Assert
+        assertThrows(FieldsValidationException.class,
+                () -> updateDishUseCase.updateDish(savedDish.getId(), null, "Some description"));
+    }
+
+    @Test
+    void Expect_FieldsValidationException_When_PriceIsZeroOrNegative() {
+        // Act & Assert
+        assertThrows(FieldsValidationException.class,
+                () -> updateDishUseCase.updateDish(savedDish.getId(), 0, "Some description"));
+    }
+
+    @Test
+    void Expect_FieldsValidationException_When_DescriptionIsBlank() {
+        // Act & Assert
+        assertThrows(FieldsValidationException.class,
+                () -> updateDishUseCase.updateDish(savedDish.getId(), 25000, "   "));
+    }
+
+    @Test
     void Expect_DishNotFoundException_When_DishDoesNotExist() {
         // Arrange
         when(dishPersistencePort.findDishById(99L)).thenReturn(Optional.empty());
@@ -90,7 +113,8 @@ class UpdateDishUseCaseTest {
     void Expect_OwnerNotAuthorizedException_When_AuthenticatedUserIsNotRestaurantOwner() {
         // Arrange
         when(dishPersistencePort.findDishById(savedDish.getId())).thenReturn(Optional.of(savedDish));
-        when(restaurantPersistencePort.findRestaurantById(savedDish.getRestaurantId())).thenReturn(Optional.of(savedRestaurant));
+        when(restaurantPersistencePort.findRestaurantById(savedDish.getRestaurantId()))
+                .thenReturn(Optional.of(savedRestaurant));
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(99L);
 
         // Act & Assert

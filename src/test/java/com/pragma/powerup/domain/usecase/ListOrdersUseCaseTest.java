@@ -68,7 +68,8 @@ class ListOrdersUseCaseTest {
                                 .thenReturn(pagedResult);
 
                 // Act
-                PagedResult<OrderModel> result = listOrdersUseCase.listOrders(OrderStatus.PENDIENTE, DEFAULT_PAGE, DEFAULT_PAGE_SIZE);
+                PagedResult<OrderModel> result = listOrdersUseCase.listOrders(OrderStatus.PENDIENTE, DEFAULT_PAGE,
+                                DEFAULT_PAGE_SIZE);
 
                 // Assert
                 assertNotNull(result);
@@ -90,7 +91,8 @@ class ListOrdersUseCaseTest {
                                 .thenReturn(pagedResult);
 
                 // Act
-                PagedResult<OrderModel> result = listOrdersUseCase.listOrders(OrderStatus.PENDIENTE, DEFAULT_PAGE, DEFAULT_PAGE_SIZE);
+                PagedResult<OrderModel> result = listOrdersUseCase.listOrders(OrderStatus.PENDIENTE, DEFAULT_PAGE,
+                                DEFAULT_PAGE_SIZE);
 
                 // Assert
                 result.getContent().forEach(order -> assertEquals(OrderStatus.PENDIENTE, order.getStatus()));
@@ -101,7 +103,8 @@ class ListOrdersUseCaseTest {
         @Test
         void Expect_FieldsValidationException_When_NegativePage() {
                 FieldsValidationException ex = assertThrows(FieldsValidationException.class,
-                                () -> listOrdersUseCase.listOrders(OrderStatus.PENDIENTE, NEGATIVE_PAGE, DEFAULT_PAGE_SIZE));
+                                () -> listOrdersUseCase.listOrders(OrderStatus.PENDIENTE, NEGATIVE_PAGE,
+                                                DEFAULT_PAGE_SIZE));
 
                 assertTrue(ex.getErrors().containsKey(FieldConstants.PAGE));
         }
@@ -109,7 +112,8 @@ class ListOrdersUseCaseTest {
         @Test
         void Expect_FieldsValidationException_When_ZeroPageSize() {
                 FieldsValidationException ex = assertThrows(FieldsValidationException.class,
-                                () -> listOrdersUseCase.listOrders(OrderStatus.PENDIENTE, DEFAULT_PAGE, ZERO_PAGE_SIZE));
+                                () -> listOrdersUseCase.listOrders(OrderStatus.PENDIENTE, DEFAULT_PAGE,
+                                                ZERO_PAGE_SIZE));
 
                 assertTrue(ex.getErrors().containsKey(FieldConstants.PAGE_SIZE));
         }
@@ -117,7 +121,8 @@ class ListOrdersUseCaseTest {
         @Test
         void Expect_FieldsValidationException_When_NegativePageSize() {
                 FieldsValidationException ex = assertThrows(FieldsValidationException.class,
-                                () -> listOrdersUseCase.listOrders(OrderStatus.PENDIENTE, DEFAULT_PAGE, NEGATIVE_PAGE_SIZE));
+                                () -> listOrdersUseCase.listOrders(OrderStatus.PENDIENTE, DEFAULT_PAGE,
+                                                NEGATIVE_PAGE_SIZE));
 
                 assertTrue(ex.getErrors().containsKey(FieldConstants.PAGE_SIZE));
         }
@@ -125,7 +130,8 @@ class ListOrdersUseCaseTest {
         @Test
         void Expect_FieldsValidationException_When_NegativePageAndZeroPageSize() {
                 FieldsValidationException ex = assertThrows(FieldsValidationException.class,
-                                () -> listOrdersUseCase.listOrders(OrderStatus.PENDIENTE, NEGATIVE_PAGE, ZERO_PAGE_SIZE));
+                                () -> listOrdersUseCase.listOrders(OrderStatus.PENDIENTE, NEGATIVE_PAGE,
+                                                ZERO_PAGE_SIZE));
 
                 assertTrue(ex.getErrors().containsKey(FieldConstants.PAGE));
                 assertTrue(ex.getErrors().containsKey(FieldConstants.PAGE_SIZE));
@@ -141,6 +147,7 @@ class ListOrdersUseCaseTest {
 
                 // Act & Assert
                 assertThrows(EmployeeNotLinkedToRestaurantException.class,
-                                () -> listOrdersUseCase.listOrders(OrderStatus.PENDIENTE, DEFAULT_PAGE, DEFAULT_PAGE_SIZE));
+                                () -> listOrdersUseCase.listOrders(OrderStatus.PENDIENTE, DEFAULT_PAGE,
+                                                DEFAULT_PAGE_SIZE));
         }
 }

@@ -1,6 +1,7 @@
 package com.pragma.powerup.domain.usecase;
 
 import com.pragma.powerup.domain.exception.CategoryNotFoundException;
+import com.pragma.powerup.domain.exception.FieldsValidationException;
 import com.pragma.powerup.domain.exception.OwnerNotAuthorizedException;
 import com.pragma.powerup.domain.exception.RestaurantNotFoundException;
 import com.pragma.powerup.domain.model.CategoryModel;
@@ -32,94 +33,171 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class CreateDishUseCaseTest {
 
-    @Mock
-    private IDishPersistencePort dishPersistencePort;
+        @Mock
+        private IDishPersistencePort dishPersistencePort;
 
-    @Mock
-    private IRestaurantPersistencePort restaurantPersistencePort;
+        @Mock
+        private IRestaurantPersistencePort restaurantPersistencePort;
 
-    @Mock
-    private ICategoryPersistencePort categoryPersistencePort;
+        @Mock
+        private ICategoryPersistencePort categoryPersistencePort;
 
-    @Mock
-    private IAuthenticatedUserPort authenticatedUserPort;
+        @Mock
+        private IAuthenticatedUserPort authenticatedUserPort;
 
-    @InjectMocks
-    private CreateDishUseCase createDishUseCase;
+        @InjectMocks
+        private CreateDishUseCase createDishUseCase;
 
-    private DishModel validDish;
-    private RestaurantModel savedRestaurant;
-    private CategoryModel savedCategory;
+        private DishModel validDish;
+        private RestaurantModel savedRestaurant;
+        private CategoryModel savedCategory;
 
-    @BeforeEach
-    void setUp() {
-        validDish = DishModelFactory.createValidDish();
-        savedRestaurant = RestaurantModelFactory.createSavedRestaurant();
-        savedCategory = CategoryModelFactory.createSavedCategory();
-    }
+        @BeforeEach
+        void setUp() {
+                validDish = DishModelFactory.createValidDish();
+                savedRestaurant = RestaurantModelFactory.createSavedRestaurant();
+                savedCategory = CategoryModelFactory.createSavedCategory();
+        }
 
-    // ─── Happy path
+        // ─── Happy path
 
-    @Test
-    void When_DishDataIsCorrectAndRestaurantAndCategoryExist_Expect_DishToBeSavedWithActiveTrue() {
-        // Arrange
-        DishModel savedDish = DishModelFactory.createSavedDish();
+        @Test
+        void When_DishDataIsCorrectAndRestaurantAndCategoryExist_Expect_DishToBeSavedWithActiveTrue() {
+                // Arrange
+                DishModel savedDish = DishModelFactory.createSavedDish();
 
-        when(restaurantPersistencePort.findRestaurantById(validDish.getRestaurantId()))
-                .thenReturn(Optional.of(savedRestaurant));
-        when(categoryPersistencePort.findCategoryById(validDish.getCategoryId()))
-                .thenReturn(Optional.of(savedCategory));
-        when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(savedRestaurant.getOwnerId());
-        when(dishPersistencePort.saveDish(any(DishModel.class))).thenReturn(savedDish);
+                when(restaurantPersistencePort.findRestaurantById(validDish.getRestaurantId()))
+                                .thenReturn(Optional.of(savedRestaurant));
+                when(categoryPersistencePort.findCategoryById(validDish.getCategoryId()))
+                                .thenReturn(Optional.of(savedCategory));
+                when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(savedRestaurant.getOwnerId());
+                when(dishPersistencePort.saveDish(any(DishModel.class))).thenReturn(savedDish);
 
-        // Act
-        DishModel result = createDishUseCase.createDish(validDish);
+                // Act
+                DishModel result = createDishUseCase.createDish(validDish);
 
-        // Assert
-        assertNotNull(result);
-        assertNotNull(result.getId());
-        assertEquals(savedDish.getName(), result.getName());
-        assertEquals(savedDish.getPrice(), result.getPrice());
-        assertTrue(result.getActive());
-    }
+                // Assert
+                assertNotNull(result);
+                assertNotNull(result.getId());
+                assertEquals(savedDish.getName(), result.getName());
+                assertEquals(savedDish.getPrice(), result.getPrice());
+                assertTrue(result.getActive());
+        }
 
-    // ─── Exceptions path
+        // ─── Exceptions path
 
-    @Test
-    void Expect_RestaurantNotFoundException_When_RestaurantDoesNotExist() {
-        // Arrange
-        when(restaurantPersistencePort.findRestaurantById(validDish.getRestaurantId()))
-                .thenReturn(Optional.empty());
+        @Test
+        void Expect_FieldsValidationException_When_NameIsBlank() {
+                // Arrange
+                DishModel dish = DishModelFactory.createValidDish();
+                dish.setName("   ");
 
-        // Act & Assert
-        assertThrows(RestaurantNotFoundException.class,
-                () -> createDishUseCase.createDish(validDish));
-    }
+                // Act & Assert
+                assertThrows(FieldsValidationException.class,
+                                () -> createDishUseCase.createDish(dish));
+        }
 
-    @Test
-    void Expect_CategoryNotFoundException_When_CategoryDoesNotExist() {
-        // Arrange
-        when(restaurantPersistencePort.findRestaurantById(validDish.getRestaurantId()))
-                .thenReturn(Optional.of(savedRestaurant));
-        when(categoryPersistencePort.findCategoryById(validDish.getCategoryId()))
-                .thenReturn(Optional.empty());
+        @Test
+        void Expect_FieldsValidationException_When_CategoryIdIsNull() {
+                // Arrange
+                DishModel dish = DishModelFactory.createValidDish();
+                dish.setCategoryId(null);
 
-        // Act & Assert
-        assertThrows(CategoryNotFoundException.class,
-                () -> createDishUseCase.createDish(validDish));
-    }
+                // Act & Assert
+                assertThrows(FieldsValidationException.class,
+                                () -> createDishUseCase.createDish(dish));
+        }
 
-    @Test
-    void Expect_OwnerNotAuthorizedException_When_AuthenticatedUserIsNotRestaurantOwner() {
-        // Arrange
-        when(restaurantPersistencePort.findRestaurantById(validDish.getRestaurantId()))
-                .thenReturn(Optional.of(savedRestaurant));
-        when(categoryPersistencePort.findCategoryById(validDish.getCategoryId()))
-                .thenReturn(Optional.of(savedCategory));
-        when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(99L);
+        @Test
+        void Expect_FieldsValidationException_When_DescriptionIsBlank() {
+                // Arrange
+                DishModel dish = DishModelFactory.createValidDish();
+                dish.setDescription("   ");
 
-        // Act & Assert
-        assertThrows(OwnerNotAuthorizedException.class,
-                () -> createDishUseCase.createDish(validDish));
-    }
+                // Act & Assert
+                assertThrows(FieldsValidationException.class,
+                                () -> createDishUseCase.createDish(dish));
+        }
+
+        @Test
+        void Expect_FieldsValidationException_When_PriceIsNull() {
+                // Arrange
+                DishModel dish = DishModelFactory.createValidDish();
+                dish.setPrice(null);
+
+                // Act & Assert
+                assertThrows(FieldsValidationException.class,
+                                () -> createDishUseCase.createDish(dish));
+        }
+
+        @Test
+        void Expect_FieldsValidationException_When_PriceIsZeroOrNegative() {
+                // Arrange
+                DishModel dish = DishModelFactory.createValidDish();
+                dish.setPrice(0);
+
+                // Act & Assert
+                assertThrows(FieldsValidationException.class,
+                                () -> createDishUseCase.createDish(dish));
+        }
+
+        @Test
+        void Expect_FieldsValidationException_When_RestaurantIdIsNull() {
+                // Arrange
+                DishModel dish = DishModelFactory.createValidDish();
+                dish.setRestaurantId(null);
+
+                // Act & Assert
+                assertThrows(FieldsValidationException.class,
+                                () -> createDishUseCase.createDish(dish));
+        }
+
+        @Test
+        void Expect_FieldsValidationException_When_UrlImageIsBlank() {
+                // Arrange
+                DishModel dish = DishModelFactory.createValidDish();
+                dish.setUrlImage("   ");
+
+                // Act & Assert
+                assertThrows(FieldsValidationException.class,
+                                () -> createDishUseCase.createDish(dish));
+        }
+
+        @Test
+        void Expect_RestaurantNotFoundException_When_RestaurantDoesNotExist() {
+                // Arrange
+                when(restaurantPersistencePort.findRestaurantById(validDish.getRestaurantId()))
+                                .thenReturn(Optional.empty());
+
+                // Act & Assert
+                assertThrows(RestaurantNotFoundException.class,
+                                () -> createDishUseCase.createDish(validDish));
+        }
+
+        @Test
+        void Expect_CategoryNotFoundException_When_CategoryDoesNotExist() {
+                // Arrange
+                when(restaurantPersistencePort.findRestaurantById(validDish.getRestaurantId()))
+                                .thenReturn(Optional.of(savedRestaurant));
+                when(categoryPersistencePort.findCategoryById(validDish.getCategoryId()))
+                                .thenReturn(Optional.empty());
+
+                // Act & Assert
+                assertThrows(CategoryNotFoundException.class,
+                                () -> createDishUseCase.createDish(validDish));
+        }
+
+        @Test
+        void Expect_OwnerNotAuthorizedException_When_AuthenticatedUserIsNotRestaurantOwner() {
+                // Arrange
+                when(restaurantPersistencePort.findRestaurantById(validDish.getRestaurantId()))
+                                .thenReturn(Optional.of(savedRestaurant));
+                when(categoryPersistencePort.findCategoryById(validDish.getCategoryId()))
+                                .thenReturn(Optional.of(savedCategory));
+                when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(99L);
+
+                // Act & Assert
+                assertThrows(OwnerNotAuthorizedException.class,
+                                () -> createDishUseCase.createDish(validDish));
+        }
 }

@@ -1,5 +1,6 @@
 package com.pragma.powerup.domain.usecase;
 
+import com.pragma.powerup.domain.exception.FieldsValidationException;
 import com.pragma.powerup.domain.exception.OwnerNotFoundException;
 import com.pragma.powerup.domain.exception.TechnicalException;
 import com.pragma.powerup.domain.model.RestaurantModel;
@@ -58,6 +59,105 @@ class CreateRestaurantUseCaseTest {
     }
 
     // ─── Exceptions path
+
+    @Test
+    void Expect_FieldsValidationException_When_NameIsBlank() {
+        // Arrange
+        RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
+        restaurant.setName("   ");
+
+        // Act & Assert
+        assertThrows(FieldsValidationException.class,
+                () -> createRestaurantUseCase.createRestaurant(restaurant));
+    }
+
+    @Test
+    void Expect_FieldsValidationException_When_NameIsOnlyNumbers() {
+        // Arrange
+        RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
+        restaurant.setName("123456");
+
+        // Act & Assert
+        assertThrows(FieldsValidationException.class,
+                () -> createRestaurantUseCase.createRestaurant(restaurant));
+    }
+
+    @Test
+    void Expect_FieldsValidationException_When_NitIsBlank() {
+        // Arrange
+        RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
+        restaurant.setNit("   ");
+
+        // Act & Assert
+        assertThrows(FieldsValidationException.class,
+                () -> createRestaurantUseCase.createRestaurant(restaurant));
+    }
+
+    @Test
+    void Expect_FieldsValidationException_When_NitContainsNonDigits() {
+        // Arrange
+        RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
+        restaurant.setNit("90ABC123");
+
+        // Act & Assert
+        assertThrows(FieldsValidationException.class,
+                () -> createRestaurantUseCase.createRestaurant(restaurant));
+    }
+
+    @Test
+    void Expect_FieldsValidationException_When_AddressIsBlank() {
+        // Arrange
+        RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
+        restaurant.setAddress("   ");
+
+        // Act & Assert
+        assertThrows(FieldsValidationException.class,
+                () -> createRestaurantUseCase.createRestaurant(restaurant));
+    }
+
+    @Test
+    void Expect_FieldsValidationException_When_PhoneIsBlank() {
+        // Arrange
+        RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
+        restaurant.setPhone("   ");
+
+        // Act & Assert
+        assertThrows(FieldsValidationException.class,
+                () -> createRestaurantUseCase.createRestaurant(restaurant));
+    }
+
+    @Test
+    void Expect_FieldsValidationException_When_PhoneHasInvalidFormat() {
+        // Arrange
+        RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
+        restaurant.setPhone("++5730012345678901234");
+
+        // Act & Assert
+        assertThrows(FieldsValidationException.class,
+                () -> createRestaurantUseCase.createRestaurant(restaurant));
+    }
+
+    @Test
+    void Expect_FieldsValidationException_When_UrlLogoIsBlank() {
+        // Arrange
+        RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
+        restaurant.setUrlLogo("   ");
+
+        // Act & Assert
+        assertThrows(FieldsValidationException.class,
+                () -> createRestaurantUseCase.createRestaurant(restaurant));
+    }
+
+    @Test
+    void Expect_FieldsValidationException_When_OwnerIdIsNull() {
+        // Arrange
+        RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
+        restaurant.setOwnerId(null);
+
+        // Act & Assert
+        assertThrows(FieldsValidationException.class,
+                () -> createRestaurantUseCase.createRestaurant(restaurant));
+    }
 
     @Test
     void Expect_OwnerNotFoundException_When_UserIsNotOwner() {

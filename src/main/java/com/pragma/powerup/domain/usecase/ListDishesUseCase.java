@@ -29,7 +29,7 @@ public class ListDishesUseCase implements IListDishesServicePort {
 
     @Override
     public PagedResult<DishModel> listDishes(Long restaurantId, Long categoryId, int page, int pageSize) {
-        validatePaginationParams(page, pageSize);
+        this.validatePaginationParams(page, pageSize);
         restaurantPersistencePort.findRestaurantById(restaurantId)
                 .orElseThrow(() -> new RestaurantNotFoundException(
                         FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,

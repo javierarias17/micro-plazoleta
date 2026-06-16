@@ -1,16 +1,20 @@
 package com.pragma.powerup.domain.usecase;
 
 import com.pragma.powerup.domain.api.IUpdateDishServicePort;
-import com.pragma.powerup.domain.exception.DishNotFoundException;
 import com.pragma.powerup.domain.common.FieldConstants;
-import com.pragma.powerup.domain.exception.constant.FunctionalMessageConstants;
+import com.pragma.powerup.domain.common.ValidationMessageConstants;
+import com.pragma.powerup.domain.exception.DishNotFoundException;
+import com.pragma.powerup.domain.exception.FieldsValidationException;
 import com.pragma.powerup.domain.exception.OwnerNotAuthorizedException;
+import com.pragma.powerup.domain.exception.constant.FunctionalMessageConstants;
 import com.pragma.powerup.domain.model.DishModel;
 import com.pragma.powerup.domain.model.RestaurantModel;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.IDishPersistencePort;
 import com.pragma.powerup.domain.spi.IRestaurantPersistencePort;
+import com.pragma.powerup.domain.validator.FieldValidator;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class UpdateDishUseCase implements IUpdateDishServicePort {
@@ -29,13 +33,15 @@ public class UpdateDishUseCase implements IUpdateDishServicePort {
 
     @Override
     public DishModel updateDish(Long id, Integer price, String description) {
+        this.validateFields(price, description);
+
         DishModel dish = dishPersistencePort.findDishById(id)
                 .orElseThrow(() -> new DishNotFoundException(
                         FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
                         Map.of(FieldConstants.DISH_ID,
                                 FunctionalMessageConstants.DISH_NOT_FOUND)));
 
-        validateOwnership(dish);
+        this.validateBusinessRules(dish);
 
         dish.setPrice(price);
         dish.setDescription(description);
@@ -43,7 +49,22 @@ public class UpdateDishUseCase implements IUpdateDishServicePort {
         return dishPersistencePort.updateDish(dish);
     }
 
-    private void validateOwnership(DishModel dish) {
+    private void validateFields(Integer price, String description) {
+        Map<String, String> errors = new LinkedHashMap<>();
+
+        FieldValidator.validateNotNull(price, FieldConstants.PRICE,
+                ValidationMessageConstants.MSG_PRICE_REQUIRED, errors);
+        FieldValidator.validatePositive(price, FieldConstants.PRICE,
+                ValidationMessageConstants.MSG_PRICE_POSITIVE, errors);
+
+        FieldValidator.validateNotBlank(description, FieldConstants.DESCRIPTION,
+                ValidationMessageConstants.MSG_DESCRIPTION_REQUIRED, errors);
+
+        if (!errors.isEmpty())
+            throw new FieldsValidationException(errors);
+    }
+
+    private void validateBusinessRules(DishModel dish) {
         RestaurantModel restaurant = restaurantPersistencePort
                 .findRestaurantById(dish.getRestaurantId())
                 .orElseThrow(() -> new DishNotFoundException(
