@@ -33,6 +33,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class CreateDishUseCaseTest {
 
+        private static final String BLANK_VALUE = "   ";
+        private static final int PRICE_ZERO = 0;
+        private static final long OTHER_USER_ID = 99L;
+
         @Mock
         private IDishPersistencePort dishPersistencePort;
 
@@ -90,7 +94,7 @@ class CreateDishUseCaseTest {
         void Expect_FieldsValidationException_When_NameIsBlank() {
                 // Arrange
                 DishModel dish = DishModelFactory.createValidDish();
-                dish.setName("   ");
+                dish.setName(BLANK_VALUE);
 
                 // Act & Assert
                 assertThrows(FieldsValidationException.class,
@@ -112,7 +116,7 @@ class CreateDishUseCaseTest {
         void Expect_FieldsValidationException_When_DescriptionIsBlank() {
                 // Arrange
                 DishModel dish = DishModelFactory.createValidDish();
-                dish.setDescription("   ");
+                dish.setDescription(BLANK_VALUE);
 
                 // Act & Assert
                 assertThrows(FieldsValidationException.class,
@@ -134,7 +138,7 @@ class CreateDishUseCaseTest {
         void Expect_FieldsValidationException_When_PriceIsZeroOrNegative() {
                 // Arrange
                 DishModel dish = DishModelFactory.createValidDish();
-                dish.setPrice(0);
+                dish.setPrice(PRICE_ZERO);
 
                 // Act & Assert
                 assertThrows(FieldsValidationException.class,
@@ -156,7 +160,7 @@ class CreateDishUseCaseTest {
         void Expect_FieldsValidationException_When_UrlImageIsBlank() {
                 // Arrange
                 DishModel dish = DishModelFactory.createValidDish();
-                dish.setUrlImage("   ");
+                dish.setUrlImage(BLANK_VALUE);
 
                 // Act & Assert
                 assertThrows(FieldsValidationException.class,
@@ -194,7 +198,7 @@ class CreateDishUseCaseTest {
                                 .thenReturn(Optional.of(savedRestaurant));
                 when(categoryPersistencePort.findCategoryById(validDish.getCategoryId()))
                                 .thenReturn(Optional.of(savedCategory));
-                when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(99L);
+                when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(OTHER_USER_ID);
 
                 // Act & Assert
                 assertThrows(OwnerNotAuthorizedException.class,

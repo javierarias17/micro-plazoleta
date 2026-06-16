@@ -28,6 +28,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class LinkEmployeeUseCaseTest {
 
+    private static final long RESTAURANT_ID = 1L;
+    private static final long EMPLOYEE_ID = 10L;
+
     @Mock
     private IRestaurantPersistencePort restaurantPersistencePort;
 
@@ -44,8 +47,6 @@ class LinkEmployeeUseCaseTest {
     private LinkEmployeeUseCase linkEmployeeUseCase;
 
     private RestaurantModel savedRestaurant;
-    private static final Long RESTAURANT_ID = 1L;
-    private static final Long EMPLOYEE_ID = 10L;
 
     @BeforeEach
     void setUp() {

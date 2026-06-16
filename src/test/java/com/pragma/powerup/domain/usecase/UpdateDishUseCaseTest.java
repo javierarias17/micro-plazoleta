@@ -28,6 +28,14 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class UpdateDishUseCaseTest {
 
+    private static final int NEW_PRICE = 30000;
+    private static final String NEW_DESCRIPTION = "Updated description";
+    private static final int VALID_PRICE = 25000;
+    private static final String VALID_DESCRIPTION = "Some description";
+    private static final String BLANK_VALUE = "   ";
+    private static final int PRICE_ZERO = 0;
+    private static final long OTHER_ID = 99L;
+
     @Mock
     private IDishPersistencePort dishPersistencePort;
 
@@ -54,12 +62,9 @@ class UpdateDishUseCaseTest {
     @Test
     void When_DishExistsAndUserIsOwner_Expect_DishToBeUpdated() {
         // Arrange
-        Integer newPrice = 30000;
-        String newDescription = "Updated description";
-
         DishModel updatedDish = DishModelFactory.createSavedDish();
-        updatedDish.setPrice(newPrice);
-        updatedDish.setDescription(newDescription);
+        updatedDish.setPrice(NEW_PRICE);
+        updatedDish.setDescription(NEW_DESCRIPTION);
 
         when(dishPersistencePort.findDishById(savedDish.getId())).thenReturn(Optional.of(savedDish));
         when(restaurantPersistencePort.findRestaurantById(savedDish.getRestaurantId()))
@@ -68,12 +73,12 @@ class UpdateDishUseCaseTest {
         when(dishPersistencePort.updateDish(any(DishModel.class))).thenReturn(updatedDish);
 
         // Act
-        DishModel result = updateDishUseCase.updateDish(savedDish.getId(), newPrice, newDescription);
+        DishModel result = updateDishUseCase.updateDish(savedDish.getId(), NEW_PRICE, NEW_DESCRIPTION);
 
         // Assert
         assertNotNull(result);
-        assertEquals(newPrice, result.getPrice());
-        assertEquals(newDescription, result.getDescription());
+        assertEquals(NEW_PRICE, result.getPrice());
+        assertEquals(NEW_DESCRIPTION, result.getDescription());
     }
 
     // ─── Exceptions path
@@ -82,31 +87,31 @@ class UpdateDishUseCaseTest {
     void Expect_FieldsValidationException_When_PriceIsNull() {
         // Act & Assert
         assertThrows(FieldsValidationException.class,
-                () -> updateDishUseCase.updateDish(savedDish.getId(), null, "Some description"));
+                () -> updateDishUseCase.updateDish(savedDish.getId(), null, VALID_DESCRIPTION));
     }
 
     @Test
     void Expect_FieldsValidationException_When_PriceIsZeroOrNegative() {
         // Act & Assert
         assertThrows(FieldsValidationException.class,
-                () -> updateDishUseCase.updateDish(savedDish.getId(), 0, "Some description"));
+                () -> updateDishUseCase.updateDish(savedDish.getId(), PRICE_ZERO, VALID_DESCRIPTION));
     }
 
     @Test
     void Expect_FieldsValidationException_When_DescriptionIsBlank() {
         // Act & Assert
         assertThrows(FieldsValidationException.class,
-                () -> updateDishUseCase.updateDish(savedDish.getId(), 25000, "   "));
+                () -> updateDishUseCase.updateDish(savedDish.getId(), VALID_PRICE, BLANK_VALUE));
     }
 
     @Test
     void Expect_DishNotFoundException_When_DishDoesNotExist() {
         // Arrange
-        when(dishPersistencePort.findDishById(99L)).thenReturn(Optional.empty());
+        when(dishPersistencePort.findDishById(OTHER_ID)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(DishNotFoundException.class,
-                () -> updateDishUseCase.updateDish(99L, 25000, "Some description"));
+                () -> updateDishUseCase.updateDish(OTHER_ID, VALID_PRICE, VALID_DESCRIPTION));
     }
 
     @Test
@@ -115,10 +120,10 @@ class UpdateDishUseCaseTest {
         when(dishPersistencePort.findDishById(savedDish.getId())).thenReturn(Optional.of(savedDish));
         when(restaurantPersistencePort.findRestaurantById(savedDish.getRestaurantId()))
                 .thenReturn(Optional.of(savedRestaurant));
-        when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(99L);
+        when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(OTHER_ID);
 
         // Act & Assert
         assertThrows(OwnerNotAuthorizedException.class,
-                () -> updateDishUseCase.updateDish(savedDish.getId(), 30000, "New description"));
+                () -> updateDishUseCase.updateDish(savedDish.getId(), NEW_PRICE, NEW_DESCRIPTION));
     }
 }

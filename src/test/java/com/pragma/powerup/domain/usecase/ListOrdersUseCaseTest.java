@@ -28,6 +28,14 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ListOrdersUseCaseTest {
 
+        private static final long EMPLOYEE_ID = 20L;
+        private static final long RESTAURANT_ID = 1L;
+        private static final int DEFAULT_PAGE = 0;
+        private static final int DEFAULT_PAGE_SIZE = 10;
+        private static final int NEGATIVE_PAGE = -1;
+        private static final int ZERO_PAGE_SIZE = 0;
+        private static final int NEGATIVE_PAGE_SIZE = -5;
+
         @Mock
         private IOrderPersistencePort orderPersistencePort;
 
@@ -39,14 +47,6 @@ class ListOrdersUseCaseTest {
 
         @InjectMocks
         private ListOrdersUseCase listOrdersUseCase;
-
-        private static final Long EMPLOYEE_ID = 20L;
-        private static final Long RESTAURANT_ID = 1L;
-        private static final int DEFAULT_PAGE = 0;
-        private static final int DEFAULT_PAGE_SIZE = 10;
-        private static final int NEGATIVE_PAGE = -1;
-        private static final int ZERO_PAGE_SIZE = 0;
-        private static final int NEGATIVE_PAGE_SIZE = -5;
 
         private PagedResult<OrderModel> pagedResult;
 

@@ -21,6 +21,12 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class CreateRestaurantUseCaseTest {
 
+    private static final String BLANK_VALUE = "   ";
+    private static final String NAME_ONLY_NUMBERS = "123456";
+    private static final String NIT_WITH_NON_DIGITS = "90ABC123";
+    private static final String PHONE_INVALID_FORMAT = "++5730012345678901234";
+    private static final String TECHNICAL_ERROR_MSG = "User validation service is unavailable";
+
     @Mock
     private IRestaurantPersistencePort restaurantPersistencePort;
 
@@ -64,7 +70,7 @@ class CreateRestaurantUseCaseTest {
     void Expect_FieldsValidationException_When_NameIsBlank() {
         // Arrange
         RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
-        restaurant.setName("   ");
+        restaurant.setName(BLANK_VALUE);
 
         // Act & Assert
         assertThrows(FieldsValidationException.class,
@@ -75,7 +81,7 @@ class CreateRestaurantUseCaseTest {
     void Expect_FieldsValidationException_When_NameIsOnlyNumbers() {
         // Arrange
         RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
-        restaurant.setName("123456");
+        restaurant.setName(NAME_ONLY_NUMBERS);
 
         // Act & Assert
         assertThrows(FieldsValidationException.class,
@@ -86,7 +92,7 @@ class CreateRestaurantUseCaseTest {
     void Expect_FieldsValidationException_When_NitIsBlank() {
         // Arrange
         RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
-        restaurant.setNit("   ");
+        restaurant.setNit(BLANK_VALUE);
 
         // Act & Assert
         assertThrows(FieldsValidationException.class,
@@ -97,7 +103,7 @@ class CreateRestaurantUseCaseTest {
     void Expect_FieldsValidationException_When_NitContainsNonDigits() {
         // Arrange
         RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
-        restaurant.setNit("90ABC123");
+        restaurant.setNit(NIT_WITH_NON_DIGITS);
 
         // Act & Assert
         assertThrows(FieldsValidationException.class,
@@ -108,7 +114,7 @@ class CreateRestaurantUseCaseTest {
     void Expect_FieldsValidationException_When_AddressIsBlank() {
         // Arrange
         RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
-        restaurant.setAddress("   ");
+        restaurant.setAddress(BLANK_VALUE);
 
         // Act & Assert
         assertThrows(FieldsValidationException.class,
@@ -119,7 +125,7 @@ class CreateRestaurantUseCaseTest {
     void Expect_FieldsValidationException_When_PhoneIsBlank() {
         // Arrange
         RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
-        restaurant.setPhone("   ");
+        restaurant.setPhone(BLANK_VALUE);
 
         // Act & Assert
         assertThrows(FieldsValidationException.class,
@@ -130,7 +136,7 @@ class CreateRestaurantUseCaseTest {
     void Expect_FieldsValidationException_When_PhoneHasInvalidFormat() {
         // Arrange
         RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
-        restaurant.setPhone("++5730012345678901234");
+        restaurant.setPhone(PHONE_INVALID_FORMAT);
 
         // Act & Assert
         assertThrows(FieldsValidationException.class,
@@ -141,7 +147,7 @@ class CreateRestaurantUseCaseTest {
     void Expect_FieldsValidationException_When_UrlLogoIsBlank() {
         // Arrange
         RestaurantModel restaurant = RestaurantModelFactory.createValidRestaurant();
-        restaurant.setUrlLogo("   ");
+        restaurant.setUrlLogo(BLANK_VALUE);
 
         // Act & Assert
         assertThrows(FieldsValidationException.class,
@@ -173,7 +179,7 @@ class CreateRestaurantUseCaseTest {
     void Expect_TechnicalException_When_UserValidationServiceIsUnavailable() {
         // Arrange
         when(userValidationPort.isOwner(validRestaurant.getOwnerId()))
-                .thenThrow(new TechnicalException("User validation service is unavailable"));
+                .thenThrow(new TechnicalException(TECHNICAL_ERROR_MSG));
 
         // Act & Assert
         assertThrows(TechnicalException.class,

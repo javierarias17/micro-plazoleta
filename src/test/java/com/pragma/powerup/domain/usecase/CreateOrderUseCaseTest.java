@@ -35,6 +35,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class CreateOrderUseCaseTest {
 
+    private static final long CLIENT_ID = 10L;
+    private static final long RESTAURANT_ID = 1L;
+
     @Mock
     private IOrderPersistencePort orderPersistencePort;
 
@@ -49,9 +52,6 @@ class CreateOrderUseCaseTest {
 
     @InjectMocks
     private CreateOrderUseCase createOrderUseCase;
-
-    private static final Long CLIENT_ID = 10L;
-    private static final Long RESTAURANT_ID = 1L;
 
     private OrderModel validOrderRequest;
     private RestaurantModel savedRestaurant;
