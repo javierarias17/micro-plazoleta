@@ -213,6 +213,24 @@ public class ControllerAdvisor {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(buildErrorResponse(ex));
     }
 
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleOrderNotFoundException(
+            OrderNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildErrorResponse(ex));
+    }
+
+    @ExceptionHandler(OrderNotFromRestaurantException.class)
+    public ResponseEntity<Map<String, Object>> handleOrderNotFromRestaurantException(
+            OrderNotFromRestaurantException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(buildErrorResponse(ex));
+    }
+
+    @ExceptionHandler(OrderNotAssignableException.class)
+    public ResponseEntity<Map<String, Object>> handleOrderNotAssignableException(
+            OrderNotAssignableException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(ex));
+    }
+
     // endregion
 
     // region Infrastructure — technical and unexpected errors

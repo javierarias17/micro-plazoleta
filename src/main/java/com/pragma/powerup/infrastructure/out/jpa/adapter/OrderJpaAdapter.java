@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -37,7 +38,7 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
 
     @Override
     public PagedResult<OrderModel> findByRestaurantAndStatus(Long restaurantId, OrderStatus status,
-                                                             int page, int pageSize) {
+            int page, int pageSize) {
         Page<OrderEntity> entityPage = orderRepository.findByRestaurant_IdAndStatus(
                 restaurantId, status, PageRequest.of(page, pageSize));
         return PagedResult.<OrderModel>builder()
@@ -49,5 +50,17 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
                 .currentPage(entityPage.getNumber())
                 .pageSize(entityPage.getSize())
                 .build();
+    }
+
+    @Override
+    public Optional<OrderModel> findById(Long orderId) {
+        return orderRepository.findById(orderId).map(orderEntityMapper::toModel);
+    }
+
+    @Override
+    public OrderModel updateOrder(OrderModel orderModel) {
+        OrderEntity orderEntity = orderEntityMapper.toEntity(orderModel);
+        orderEntity.getOrderDishes().forEach(dish -> dish.setOrder(orderEntity));
+        return orderEntityMapper.toModel(orderRepository.save(orderEntity));
     }
 }

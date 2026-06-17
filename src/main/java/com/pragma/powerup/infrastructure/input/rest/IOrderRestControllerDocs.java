@@ -73,4 +73,32 @@ public interface IOrderRestControllerDocs {
                     schema = @Schema(implementation = OrderStatus.class)) OrderStatus status,
             @Parameter(description = "Page number (0-based)", example = "0") int page,
             @Parameter(description = "Number of elements per page", example = "10") int pageSize);
+
+    @Operation(summary = "Assign order to employee", description = "Allows an employee to assign themselves to a PENDING order and change its status to EN_PREPARACION. The order must belong to the restaurant where the employee works.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Order assigned successfully",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = OrderResponseDto.class))),
+            @ApiResponse(responseCode = "409", description = "Order is not in PENDING status",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"Business validation failed\",\"errors\":[{\"field\":\"orderId\",\"message\":\"The order cannot be assigned because it is not in PENDING status\"}]}"))),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"No authentication token provided.\"}"))),
+            @ApiResponse(responseCode = "403", description = "Authenticated user does not have EMPLOYEE role, is not linked to any restaurant, or order does not belong to employee's restaurant",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = {
+                                    @ExampleObject(name = "No role", value = "{\"message\":\"Access Denied\"}"),
+                                    @ExampleObject(name = "Not linked", value = "{\"message\":\"Business validation failed\",\"errors\":[{\"field\":\"employeeId\",\"message\":\"The employee is not linked to any restaurant\"}]}"),
+                                    @ExampleObject(name = "Order not from restaurant", value = "{\"message\":\"Business validation failed\",\"errors\":[{\"field\":\"orderId\",\"message\":\"The order does not belong to your restaurant\"}]}")
+                            })),
+            @ApiResponse(responseCode = "404", description = "Order not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"Business validation failed\",\"errors\":[{\"field\":\"orderId\",\"message\":\"The order does not exist\"}]}"))),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"An unexpected error occurred. Please contact the administrator.\"}")))
+    })
+    ResponseEntity<OrderResponseDto> assignOrder(
+            @Parameter(description = "ID of the order to assign", required = true) Long orderId);
 }

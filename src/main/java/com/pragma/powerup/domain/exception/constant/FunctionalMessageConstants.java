@@ -21,4 +21,8 @@ public class FunctionalMessageConstants {
     public static final String DISH_NOT_AVAILABLE = "One or more dishes are not available or do not exist";
     public static final String EMPLOYEE_NOT_LINKED_TO_RESTAURANT = "The employee is not linked to any restaurant";
     public static final String OWNER_NOT_AUTHORIZED_TO_TOGGLE_DISH_STATUS = "You are not authorized to change the status of dishes for this restaurant";
+    public static final String ORDER_NOT_FOUND = "The order does not exist";
+    public static final String ORDER_NOT_FROM_RESTAURANT = "The order does not belong to your restaurant";
+    public static final String ORDER_NOT_IN_ASSIGNABLE_STATUS = "The order cannot be assigned because it is not in PENDING status";
+    public static final String RESTAURANT_NOT_FOUND_FOR_ORDER = "The restaurant associated with the order does not exist";
 }

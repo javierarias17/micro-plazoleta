@@ -6,6 +6,7 @@ import com.pragma.powerup.application.dto.response.PagedResponseDto;
 import com.pragma.powerup.application.handler.IOrderHandler;
 import com.pragma.powerup.application.mapper.IOrderRequestMapper;
 import com.pragma.powerup.application.mapper.IOrderResponseMapper;
+import com.pragma.powerup.domain.api.IAssignOrderServicePort;
 import com.pragma.powerup.domain.api.ICreateOrderServicePort;
 import com.pragma.powerup.domain.api.IListOrdersServicePort;
 import com.pragma.powerup.domain.model.OrderModel;
@@ -22,6 +23,7 @@ public class OrderHandler implements IOrderHandler {
 
     private final ICreateOrderServicePort createOrderServicePort;
     private final IListOrdersServicePort listOrdersServicePort;
+    private final IAssignOrderServicePort assignOrderServicePort;
     private final IOrderRequestMapper orderRequestMapper;
     private final IOrderResponseMapper orderResponseMapper;
 
@@ -30,6 +32,11 @@ public class OrderHandler implements IOrderHandler {
         return orderResponseMapper.toResponse(
                 createOrderServicePort.createOrder(
                         orderRequestMapper.toOrder(orderRequestDto)));
+    }
+
+    @Override
+    public OrderResponseDto assignOrder(Long orderId) {
+        return orderResponseMapper.toResponse(assignOrderServicePort.assignOrder(orderId));
     }
 
     @Override
