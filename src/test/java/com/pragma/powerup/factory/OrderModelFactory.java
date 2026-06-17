@@ -43,6 +43,37 @@ public class OrderModelFactory {
         return List.of(1L, 2L);
     }
 
+    public static OrderModel createSavedOrderForRestaurant(Long restaurantId) {
+        return OrderModel.builder()
+                .id(1L)
+                .clientId(10L)
+                .date(LocalDate.of(2024, Month.JANUARY, 1))
+                .status(OrderStatus.PENDIENTE)
+                .restaurantId(restaurantId)
+                .build();
+    }
+
+    public static OrderModel createSavedOrderInEnPreparacion() {
+        return OrderModel.builder()
+                .id(1L)
+                .clientId(10L)
+                .date(LocalDate.of(2024, Month.JANUARY, 1))
+                .status(OrderStatus.EN_PREPARACION)
+                .restaurantId(1L)
+                .build();
+    }
+
+    public static OrderModel createAssignedOrder() {
+        return OrderModel.builder()
+                .id(1L)
+                .clientId(10L)
+                .chefId(20L)
+                .date(LocalDate.of(2024, Month.JANUARY, 1))
+                .status(OrderStatus.EN_PREPARACION)
+                .restaurantId(1L)
+                .build();
+    }
+
     public static PagedResult<OrderModel> createOrderPagedResult() {
         List<OrderModel> orders = List.of(
                 OrderModel.builder().id(1L).clientId(10L).date(LocalDate.of(2024, Month.JANUARY, 1))
