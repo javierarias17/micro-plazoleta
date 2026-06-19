@@ -85,10 +85,7 @@ public class CreateDishUseCase implements ICreateDishServicePort {
 
         Long authenticatedUserId = authenticatedUserPort.getAuthenticatedUserId();
         if (!restaurant.getOwnerId().equals(authenticatedUserId)) {
-            throw new OwnerNotAuthorizedException(
-                    FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
-                    Map.of(FieldConstants.OWNER_ID,
-                            FunctionalMessageConstants.OWNER_NOT_AUTHORIZED_TO_CREATE_DISH));
+            throw new ForbiddenException();
         }
     }
 }

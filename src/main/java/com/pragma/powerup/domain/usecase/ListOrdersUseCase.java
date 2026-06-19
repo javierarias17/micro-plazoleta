@@ -10,7 +10,7 @@ import com.pragma.powerup.domain.model.OrderStatus;
 import com.pragma.powerup.domain.model.PagedResult;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.IOrderPersistencePort;
-import com.pragma.powerup.domain.spi.IRestaurantEmployeePersistencePort;
+import com.pragma.powerup.domain.spi.IUserServicePort;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -21,14 +21,14 @@ public class ListOrdersUseCase implements IListOrdersServicePort {
     private static final int MIN_PAGE_SIZE = 1;
 
     private final IOrderPersistencePort orderPersistencePort;
-    private final IRestaurantEmployeePersistencePort restaurantEmployeePersistencePort;
+    private final IUserServicePort userServicePort;
     private final IAuthenticatedUserPort authenticatedUserPort;
 
     public ListOrdersUseCase(IOrderPersistencePort orderPersistencePort,
-            IRestaurantEmployeePersistencePort restaurantEmployeePersistencePort,
+            IUserServicePort userServicePort,
             IAuthenticatedUserPort authenticatedUserPort) {
         this.orderPersistencePort = orderPersistencePort;
-        this.restaurantEmployeePersistencePort = restaurantEmployeePersistencePort;
+        this.userServicePort = userServicePort;
         this.authenticatedUserPort = authenticatedUserPort;
     }
 
@@ -36,9 +36,7 @@ public class ListOrdersUseCase implements IListOrdersServicePort {
     public PagedResult<OrderModel> listOrders(OrderStatus status, int page, int pageSize) {
         this.validatePaginationParams(page, pageSize);
 
-        Long employeeId = authenticatedUserPort.getAuthenticatedUserId();
-
-        Long restaurantId = restaurantEmployeePersistencePort.findRestaurantIdByEmployeeId(employeeId)
+        Long restaurantId = userServicePort.findRestaurantIdByEmployeeId(authenticatedUserPort.getAuthenticatedUserId())
                 .orElseThrow(() -> new EmployeeNotLinkedToRestaurantException(
                         FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
                         Map.of(FieldConstants.EMPLOYEE_ID,

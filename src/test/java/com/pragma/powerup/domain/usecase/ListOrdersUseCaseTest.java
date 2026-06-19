@@ -8,7 +8,7 @@ import com.pragma.powerup.domain.model.OrderStatus;
 import com.pragma.powerup.domain.model.PagedResult;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.IOrderPersistencePort;
-import com.pragma.powerup.domain.spi.IRestaurantEmployeePersistencePort;
+import com.pragma.powerup.domain.spi.IUserServicePort;
 import com.pragma.powerup.factory.OrderModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class ListOrdersUseCaseTest {
         private IOrderPersistencePort orderPersistencePort;
 
         @Mock
-        private IRestaurantEmployeePersistencePort restaurantEmployeePersistencePort;
+        private IUserServicePort userServicePort;
 
         @Mock
         private IAuthenticatedUserPort authenticatedUserPort;
@@ -61,7 +61,7 @@ class ListOrdersUseCaseTest {
         void When_ValidRequestFromLinkedEmployee_Expect_PagedOrdersReturned() {
                 // Arrange
                 when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-                when(restaurantEmployeePersistencePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID))
+                when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID))
                                 .thenReturn(Optional.of(RESTAURANT_ID));
                 when(orderPersistencePort.findByRestaurantAndStatus(anyLong(), any(OrderStatus.class), anyInt(),
                                 anyInt()))
@@ -84,7 +84,7 @@ class ListOrdersUseCaseTest {
         void When_ValidRequestFromLinkedEmployee_Expect_AllOrdersHaveCorrectStatus() {
                 // Arrange
                 when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-                when(restaurantEmployeePersistencePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID))
+                when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID))
                                 .thenReturn(Optional.of(RESTAURANT_ID));
                 when(orderPersistencePort.findByRestaurantAndStatus(anyLong(), any(OrderStatus.class), anyInt(),
                                 anyInt()))
@@ -142,7 +142,7 @@ class ListOrdersUseCaseTest {
         void Expect_EmployeeNotLinkedToRestaurantException_When_EmployeeHasNoRestaurant() {
                 // Arrange
                 when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-                when(restaurantEmployeePersistencePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID))
+                when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID))
                                 .thenReturn(Optional.empty());
 
                 // Act & Assert

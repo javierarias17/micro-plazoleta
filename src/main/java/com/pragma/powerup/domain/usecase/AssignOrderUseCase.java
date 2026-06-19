@@ -8,21 +8,21 @@ import com.pragma.powerup.domain.model.OrderModel;
 import com.pragma.powerup.domain.model.OrderStatus;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.IOrderPersistencePort;
-import com.pragma.powerup.domain.spi.IRestaurantEmployeePersistencePort;
+import com.pragma.powerup.domain.spi.IUserServicePort;
 
 import java.util.Map;
 
 public class AssignOrderUseCase implements IAssignOrderServicePort {
 
     private final IOrderPersistencePort orderPersistencePort;
-    private final IRestaurantEmployeePersistencePort restaurantEmployeePersistencePort;
+    private final IUserServicePort userServicePort;
     private final IAuthenticatedUserPort authenticatedUserPort;
 
     public AssignOrderUseCase(IOrderPersistencePort orderPersistencePort,
-            IRestaurantEmployeePersistencePort restaurantEmployeePersistencePort,
+            IUserServicePort userServicePort,
             IAuthenticatedUserPort authenticatedUserPort) {
         this.orderPersistencePort = orderPersistencePort;
-        this.restaurantEmployeePersistencePort = restaurantEmployeePersistencePort;
+        this.userServicePort = userServicePort;
         this.authenticatedUserPort = authenticatedUserPort;
     }
 
@@ -30,7 +30,7 @@ public class AssignOrderUseCase implements IAssignOrderServicePort {
     public OrderModel assignOrder(Long orderId) {
         Long employeeId = authenticatedUserPort.getAuthenticatedUserId();
 
-        Long restaurantId = restaurantEmployeePersistencePort.findRestaurantIdByEmployeeId(employeeId)
+        Long restaurantId = userServicePort.findRestaurantIdByEmployeeId(employeeId)
                 .orElseThrow(() -> new RestaurantNotFoundException(FunctionalMessageConstants.RESTAURANT_NOT_FOUND,
                         Map.of()));
 

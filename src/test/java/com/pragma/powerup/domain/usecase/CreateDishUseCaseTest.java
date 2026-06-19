@@ -2,7 +2,7 @@ package com.pragma.powerup.domain.usecase;
 
 import com.pragma.powerup.domain.exception.CategoryNotFoundException;
 import com.pragma.powerup.domain.exception.FieldsValidationException;
-import com.pragma.powerup.domain.exception.OwnerNotAuthorizedException;
+import com.pragma.powerup.domain.exception.ForbiddenException;
 import com.pragma.powerup.domain.exception.RestaurantNotFoundException;
 import com.pragma.powerup.domain.model.CategoryModel;
 import com.pragma.powerup.domain.model.DishModel;
@@ -192,7 +192,7 @@ class CreateDishUseCaseTest {
         }
 
         @Test
-        void Expect_OwnerNotAuthorizedException_When_AuthenticatedUserIsNotRestaurantOwner() {
+        void Expect_ForbiddenException_When_AuthenticatedUserIsNotRestaurantOwner() {
                 // Arrange
                 when(restaurantPersistencePort.findRestaurantById(validDish.getRestaurantId()))
                                 .thenReturn(Optional.of(savedRestaurant));
@@ -201,7 +201,7 @@ class CreateDishUseCaseTest {
                 when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(OTHER_USER_ID);
 
                 // Act & Assert
-                assertThrows(OwnerNotAuthorizedException.class,
+                assertThrows(ForbiddenException.class,
                                 () -> createDishUseCase.createDish(validDish));
         }
 }

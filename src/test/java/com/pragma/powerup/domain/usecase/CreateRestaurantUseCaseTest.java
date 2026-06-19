@@ -5,7 +5,7 @@ import com.pragma.powerup.domain.exception.OwnerNotFoundException;
 import com.pragma.powerup.domain.exception.TechnicalException;
 import com.pragma.powerup.domain.model.RestaurantModel;
 import com.pragma.powerup.domain.spi.IRestaurantPersistencePort;
-import com.pragma.powerup.domain.spi.IUserValidationPort;
+import com.pragma.powerup.domain.spi.IUserServicePort;
 import com.pragma.powerup.factory.RestaurantModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class CreateRestaurantUseCaseTest {
     private IRestaurantPersistencePort restaurantPersistencePort;
 
     @Mock
-    private IUserValidationPort userValidationPort;
+    private IUserServicePort userServicePort;
 
     @InjectMocks
     private CreateRestaurantUseCase createRestaurantUseCase;
@@ -50,7 +50,7 @@ class CreateRestaurantUseCaseTest {
         // Arrange
         RestaurantModel savedRestaurant = RestaurantModelFactory.createSavedRestaurant();
 
-        when(userValidationPort.isOwner(validRestaurant.getOwnerId())).thenReturn(true);
+        when(userServicePort.isOwner(validRestaurant.getOwnerId())).thenReturn(true);
         when(restaurantPersistencePort.saveRestaurant(any(RestaurantModel.class))).thenReturn(savedRestaurant);
 
         // Act
@@ -168,7 +168,7 @@ class CreateRestaurantUseCaseTest {
     @Test
     void Expect_OwnerNotFoundException_When_UserIsNotOwner() {
         // Arrange
-        when(userValidationPort.isOwner(validRestaurant.getOwnerId())).thenReturn(false);
+        when(userServicePort.isOwner(validRestaurant.getOwnerId())).thenReturn(false);
 
         // Act & Assert
         assertThrows(OwnerNotFoundException.class,
@@ -178,7 +178,7 @@ class CreateRestaurantUseCaseTest {
     @Test
     void Expect_TechnicalException_When_UserValidationServiceIsUnavailable() {
         // Arrange
-        when(userValidationPort.isOwner(validRestaurant.getOwnerId()))
+        when(userServicePort.isOwner(validRestaurant.getOwnerId()))
                 .thenThrow(new TechnicalException(TECHNICAL_ERROR_MSG));
 
         // Act & Assert

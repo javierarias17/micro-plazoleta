@@ -181,19 +181,9 @@ public class ControllerAdvisor {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildErrorResponse(ex));
     }
 
-    @ExceptionHandler(OwnerNotAuthorizedException.class)
-    public ResponseEntity<Map<String, Object>> handleOwnerNotAuthorizedException(OwnerNotAuthorizedException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(buildErrorResponse(ex));
-    }
-
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<Map<String, Object>> handleForbiddenException(ForbiddenException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(buildErrorResponse(ex));
-    }
-
-    @ExceptionHandler(EmployeeAlreadyLinkedException.class)
-    public ResponseEntity<Map<String, Object>> handleEmployeeAlreadyLinkedException(EmployeeAlreadyLinkedException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(ex));
     }
 
     @ExceptionHandler(CustomerHasActiveOrderException.class)
@@ -217,12 +207,6 @@ public class ControllerAdvisor {
     public ResponseEntity<Map<String, Object>> handleOrderNotFoundException(
             OrderNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildErrorResponse(ex));
-    }
-
-    @ExceptionHandler(OrderNotFromRestaurantException.class)
-    public ResponseEntity<Map<String, Object>> handleOrderNotFromRestaurantException(
-            OrderNotFromRestaurantException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(buildErrorResponse(ex));
     }
 
     @ExceptionHandler(OrderNotAssignableException.class)

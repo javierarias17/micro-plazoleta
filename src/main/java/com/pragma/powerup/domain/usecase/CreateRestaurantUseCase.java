@@ -9,7 +9,7 @@ import com.pragma.powerup.domain.exception.OwnerNotFoundException;
 import com.pragma.powerup.domain.exception.constant.FunctionalMessageConstants;
 import com.pragma.powerup.domain.model.RestaurantModel;
 import com.pragma.powerup.domain.spi.IRestaurantPersistencePort;
-import com.pragma.powerup.domain.spi.IUserValidationPort;
+import com.pragma.powerup.domain.spi.IUserServicePort;
 import com.pragma.powerup.domain.validator.FieldValidator;
 
 import java.util.LinkedHashMap;
@@ -18,12 +18,12 @@ import java.util.Map;
 public class CreateRestaurantUseCase implements ICreateRestaurantServicePort {
 
     private final IRestaurantPersistencePort restaurantPersistencePort;
-    private final IUserValidationPort userValidationPort;
+    private final IUserServicePort userServicePort;
 
     public CreateRestaurantUseCase(IRestaurantPersistencePort restaurantPersistencePort,
-            IUserValidationPort userValidationPort) {
+            IUserServicePort userServicePort) {
         this.restaurantPersistencePort = restaurantPersistencePort;
-        this.userValidationPort = userValidationPort;
+        this.userServicePort = userServicePort;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class CreateRestaurantUseCase implements ICreateRestaurantServicePort {
     }
 
     private void validateBusinessRules(RestaurantModel restaurantModel) {
-        if (!userValidationPort.isOwner(restaurantModel.getOwnerId())) {
+        if (!userServicePort.isOwner(restaurantModel.getOwnerId())) {
             throw new OwnerNotFoundException(FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
                     Map.of(FieldConstants.OWNER_ID, FunctionalMessageConstants.OWNER_NOT_FOUND));
         }

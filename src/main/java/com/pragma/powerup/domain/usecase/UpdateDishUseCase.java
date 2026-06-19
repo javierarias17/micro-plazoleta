@@ -5,7 +5,7 @@ import com.pragma.powerup.domain.common.FieldConstants;
 import com.pragma.powerup.domain.common.ValidationMessageConstants;
 import com.pragma.powerup.domain.exception.DishNotFoundException;
 import com.pragma.powerup.domain.exception.FieldsValidationException;
-import com.pragma.powerup.domain.exception.OwnerNotAuthorizedException;
+import com.pragma.powerup.domain.exception.ForbiddenException;
 import com.pragma.powerup.domain.exception.constant.FunctionalMessageConstants;
 import com.pragma.powerup.domain.model.DishModel;
 import com.pragma.powerup.domain.model.RestaurantModel;
@@ -74,10 +74,7 @@ public class UpdateDishUseCase implements IUpdateDishServicePort {
 
         Long authenticatedUserId = authenticatedUserPort.getAuthenticatedUserId();
         if (!restaurant.getOwnerId().equals(authenticatedUserId)) {
-            throw new OwnerNotAuthorizedException(
-                    FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
-                    Map.of(FieldConstants.OWNER_ID,
-                            FunctionalMessageConstants.OWNER_NOT_AUTHORIZED_TO_UPDATE_DISH));
+            throw new ForbiddenException();
         }
     }
 }

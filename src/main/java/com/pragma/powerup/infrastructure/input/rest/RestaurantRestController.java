@@ -1,6 +1,5 @@
 package com.pragma.powerup.infrastructure.input.rest;
 
-import com.pragma.powerup.application.dto.request.EmployeeLinkRequestDto;
 import com.pragma.powerup.application.dto.request.RestaurantRequestDto;
 import com.pragma.powerup.application.dto.response.PagedResponseDto;
 import com.pragma.powerup.application.dto.response.RestaurantResponseDto;
@@ -38,11 +37,9 @@ public class RestaurantRestController implements IRestaurantRestControllerDocs {
     }
 
     @Override
-    @PostMapping("/{restaurantId}/employee")
-    public ResponseEntity<Void> linkEmployee(@PathVariable Long restaurantId,
-                                             @Valid @RequestBody EmployeeLinkRequestDto employeeLinkRequestDto) {
-        restaurantHandler.linkEmployee(restaurantId, employeeLinkRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    @GetMapping("/{restaurantId}/is-owner")
+    public ResponseEntity<Boolean> isOwner(@PathVariable Long restaurantId) {
+        return ResponseEntity.ok(restaurantHandler.isOwner(restaurantId));
     }
 
     @Override

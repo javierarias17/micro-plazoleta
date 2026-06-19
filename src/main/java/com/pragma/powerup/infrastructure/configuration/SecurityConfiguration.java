@@ -22,7 +22,7 @@ public class SecurityConfiguration {
 
     private static final String ENDPOINT_RESTAURANT_CREATE = "/api/v1/restaurant";
     private static final String ENDPOINT_RESTAURANT_LIST = "/api/v1/restaurant";
-    private static final String ENDPOINT_RESTAURANT_LINK_EMPLOYEE = "/api/v1/restaurant/*/employee";
+    private static final String ENDPOINT_RESTAURANT_IS_OWNER = "/api/v1/restaurant/*/is-owner";
     private static final String ENDPOINT_DISH_CREATE = "/api/v1/dish";
     private static final String ENDPOINT_DISH_UPDATE = "/api/v1/dish/**";
     private static final String ENDPOINT_DISH_LIST = "/api/v1/dish/restaurant/*";
@@ -58,7 +58,7 @@ public class SecurityConfiguration {
                         .antMatchers(HttpMethod.GET, ENDPOINT_RESTAURANT_LIST).hasRole(ROLE_CUSTOMER)
                         .antMatchers(HttpMethod.GET, ENDPOINT_DISH_LIST).hasRole(ROLE_CUSTOMER)
                         .antMatchers(HttpMethod.POST, ENDPOINT_RESTAURANT_CREATE).hasRole(ROLE_ADMIN)
-                        .antMatchers(HttpMethod.POST, ENDPOINT_RESTAURANT_LINK_EMPLOYEE).hasRole(ROLE_OWNER)
+                        .antMatchers(HttpMethod.GET, ENDPOINT_RESTAURANT_IS_OWNER).hasRole(ROLE_OWNER)
                         .antMatchers(HttpMethod.POST, ENDPOINT_DISH_CREATE).hasRole(ROLE_OWNER)
                         .antMatchers(HttpMethod.PATCH, ENDPOINT_DISH_UPDATE).hasRole(ROLE_OWNER)
                         .antMatchers(HttpMethod.POST, ENDPOINT_ORDER_CREATE).hasRole(ROLE_CUSTOMER)
