@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface IOrderRestControllerDocs {
 
-    @Operation(summary = "Place an order", description = "Allows a customer to place an order with dishes from a single restaurant. The customer must not have any active order (PENDIENTE, EN_PREPARACION or LISTO).")
+    @Operation(summary = "Place an order", description = "Allows a customer to place an order with dishes from a single restaurant. The customer must not have any active order (PENDING, IN_PREPARATION or READY).")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Order placed successfully",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -74,7 +74,7 @@ public interface IOrderRestControllerDocs {
             @Parameter(description = "Page number (0-based)", example = "0") int page,
             @Parameter(description = "Number of elements per page", example = "10") int pageSize);
 
-    @Operation(summary = "Assign order to employee", description = "Allows an employee to assign themselves to a PENDING order and change its status to EN_PREPARACION. The order must belong to the restaurant where the employee works.")
+    @Operation(summary = "Assign order to employee", description = "Allows an employee to assign themselves to a PENDING order and change its status to IN_PREPARATION. The order must belong to the restaurant where the employee works.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Order assigned successfully",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -101,4 +101,28 @@ public interface IOrderRestControllerDocs {
     })
     ResponseEntity<OrderResponseDto> assignOrder(
             @Parameter(description = "ID of the order to assign", required = true) Long orderId);
+
+    @Operation(summary = "Mark order as ready", description = "Marks an IN_PREPARATION order as READY, generates a security PIN and sends it via SMS to the customer's phone. Only the employee assigned to the order's restaurant can perform this action.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Order marked as ready and customer notified",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = OrderResponseDto.class))),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"No authentication token provided.\"}"))),
+            @ApiResponse(responseCode = "403", description = "Employee not linked to the order's restaurant",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"Access Denied\"}"))),
+            @ApiResponse(responseCode = "404", description = "Order not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"Business validation failed\",\"errors\":[{\"field\":\"orderId\",\"message\":\"The order does not exist\"}]}"))),
+            @ApiResponse(responseCode = "409", description = "Order is not in IN_PREPARATION status",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"Business validation failed\",\"errors\":[{\"field\":\"orderId\",\"message\":\"The order cannot be marked as ready because it is not in IN_PREPARATION status\"}]}"))),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"An unexpected error occurred. Please contact the administrator.\"}")))
+    })
+    ResponseEntity<OrderResponseDto> notifyOrderReady(
+            @Parameter(description = "ID of the order to mark as ready", required = true) Long orderId);
 }

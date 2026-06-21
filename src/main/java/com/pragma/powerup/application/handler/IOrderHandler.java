@@ -9,4 +9,5 @@ public interface IOrderHandler {
     OrderResponseDto createOrder(OrderRequestDto orderRequestDto);
     PagedResponseDto<OrderResponseDto> listOrders(OrderStatus status, int page, int pageSize);
     OrderResponseDto assignOrder(Long orderId);
+    OrderResponseDto notifyOrderReady(Long orderId);
 }

@@ -67,7 +67,7 @@ class CreateOrderUseCaseTest {
     // ─── Happy path
 
     @Test
-    void When_ValidOrderWithNoPreviousActiveOrder_Expect_OrderSavedWithPendienteStatus() {
+    void When_ValidOrderWithNoPreviousActiveOrder_Expect_OrderSavedWithPendingStatus() {
         // Arrange
         OrderModel savedOrder = OrderModelFactory.createSavedOrder();
 

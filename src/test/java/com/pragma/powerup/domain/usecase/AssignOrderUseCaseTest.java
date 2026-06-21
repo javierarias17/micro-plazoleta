@@ -53,7 +53,7 @@ class AssignOrderUseCaseTest {
     // ─── Happy path
 
     @Test
-    void When_ValidAssignment_Expect_OrderUpdatedWithChefAndEnPreparacionStatus() {
+    void When_ValidAssignment_Expect_OrderUpdatedWithChefAndInPreparationStatus() {
         // Arrange
         OrderModel assignedOrder = OrderModelFactory.createAssignedOrder();
 
@@ -115,14 +115,14 @@ class AssignOrderUseCaseTest {
     }
 
     @Test
-    void Expect_OrderNotAssignableException_When_OrderIsNotInPendienteStatus() {
+    void Expect_OrderNotAssignableException_When_OrderIsNotInPendingStatus() {
         // Arrange
-        OrderModel orderInPreparacion = OrderModelFactory.createSavedOrderInEnPreparacion();
+        OrderModel orderInPreparation = OrderModelFactory.createSavedOrderInPreparation();
 
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
         when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID))
                 .thenReturn(Optional.of(RESTAURANT_ID));
-        when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(orderInPreparacion));
+        when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(orderInPreparation));
 
         // Act & Assert
         assertThrows(OrderNotAssignableException.class,

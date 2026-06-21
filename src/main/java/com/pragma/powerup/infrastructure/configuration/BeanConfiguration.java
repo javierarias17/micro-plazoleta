@@ -1,6 +1,7 @@
 package com.pragma.powerup.infrastructure.configuration;
 
 import com.pragma.powerup.domain.api.IAssignOrderServicePort;
+import com.pragma.powerup.domain.api.INotifyOrderReadyServicePort;
 import com.pragma.powerup.domain.api.ICreateDishServicePort;
 import com.pragma.powerup.domain.api.ICreateOrderServicePort;
 import com.pragma.powerup.domain.api.ICreateRestaurantServicePort;
@@ -13,10 +14,12 @@ import com.pragma.powerup.domain.api.IValidateRestaurantOwnerServicePort;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.ICategoryPersistencePort;
 import com.pragma.powerup.domain.spi.IDishPersistencePort;
+import com.pragma.powerup.domain.spi.INotifyClientPort;
 import com.pragma.powerup.domain.spi.IOrderPersistencePort;
 import com.pragma.powerup.domain.spi.IRestaurantPersistencePort;
 import com.pragma.powerup.domain.spi.IUserServicePort;
 import com.pragma.powerup.domain.usecase.AssignOrderUseCase;
+import com.pragma.powerup.domain.usecase.NotifyOrderReadyUseCase;
 import com.pragma.powerup.domain.usecase.CreateDishUseCase;
 import com.pragma.powerup.domain.usecase.CreateOrderUseCase;
 import com.pragma.powerup.domain.usecase.CreateRestaurantUseCase;
@@ -27,6 +30,7 @@ import com.pragma.powerup.domain.usecase.ToggleDishStatusUseCase;
 import com.pragma.powerup.domain.usecase.UpdateDishUseCase;
 import com.pragma.powerup.domain.usecase.ValidateRestaurantOwnerUseCase;
 import com.pragma.powerup.infrastructure.out.http.adapter.UserServiceAdapter;
+import com.pragma.powerup.infrastructure.out.http.adapter.MessagingAdapter;
 import com.pragma.powerup.infrastructure.out.jpa.adapter.CategoryJpaAdapter;
 import com.pragma.powerup.infrastructure.out.jpa.adapter.DishJpaAdapter;
 import com.pragma.powerup.infrastructure.out.jpa.adapter.OrderJpaAdapter;
@@ -65,6 +69,9 @@ public class BeanConfiguration {
 
     @Value("${adapter.micro-users.timeout}")
     private int microUsersTimeout;
+
+    @Value("${adapter.micro-messaging.url}")
+    private String microMessagingUrl;
 
     @Bean
     public RestTemplate restTemplate() {
@@ -149,5 +156,16 @@ public class BeanConfiguration {
     @Bean
     public IAssignOrderServicePort assignOrderServicePort() {
         return new AssignOrderUseCase(orderPersistencePort(), userServicePort(), authenticatedUserPort);
+    }
+
+    @Bean
+    public INotifyClientPort notifyClientPort() {
+        return new MessagingAdapter(restTemplate(), microMessagingUrl);
+    }
+
+    @Bean
+    public INotifyOrderReadyServicePort notifyOrderReadyServicePort() {
+        return new NotifyOrderReadyUseCase(orderPersistencePort(), userServicePort(),
+                authenticatedUserPort, notifyClientPort());
     }
 }

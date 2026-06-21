@@ -21,5 +21,6 @@ public class OrderModel {
     private OrderStatus status;
     private Long chefId;
     private Long restaurantId;
+    private String securityPin;
     private List<OrderDishModel> dishes;
 }

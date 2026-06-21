@@ -18,4 +18,5 @@ public class FunctionalMessageConstants {
     public static final String EMPLOYEE_NOT_LINKED_TO_RESTAURANT = "The employee is not linked to any restaurant";
     public static final String ORDER_NOT_FOUND = "The order does not exist";
     public static final String ORDER_NOT_IN_ASSIGNABLE_STATUS = "The order cannot be assigned because it is not in PENDING status";
+    public static final String ORDER_NOT_IN_PREPARATION = "The order cannot be marked as ready because it is not in IN_PREPARATION status";
 }

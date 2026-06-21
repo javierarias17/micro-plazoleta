@@ -53,7 +53,7 @@ public class OrderModelFactory {
                 .build();
     }
 
-    public static OrderModel createSavedOrderInEnPreparacion() {
+    public static OrderModel createSavedOrderInPreparation() {
         return OrderModel.builder()
                 .id(1L)
                 .clientId(10L)
@@ -71,6 +71,30 @@ public class OrderModelFactory {
                 .date(LocalDate.of(2024, Month.JANUARY, 1))
                 .status(OrderStatus.EN_PREPARACION)
                 .restaurantId(1L)
+                .build();
+    }
+
+    public static OrderModel createSavedReadyOrder() {
+        return OrderModel.builder()
+                .id(1L)
+                .clientId(10L)
+                .chefId(20L)
+                .date(LocalDate.of(2024, Month.JANUARY, 1))
+                .status(OrderStatus.LISTO)
+                .restaurantId(1L)
+                .securityPin("482951")
+                .build();
+    }
+
+    public static OrderModel createReadyOrder() {
+        return OrderModel.builder()
+                .id(1L)
+                .clientId(10L)
+                .chefId(20L)
+                .date(LocalDate.of(2024, Month.JANUARY, 1))
+                .status(OrderStatus.LISTO)
+                .restaurantId(1L)
+                .securityPin("482951")
                 .build();
     }
 

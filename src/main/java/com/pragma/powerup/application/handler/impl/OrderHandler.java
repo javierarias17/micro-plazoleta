@@ -9,6 +9,7 @@ import com.pragma.powerup.application.mapper.IOrderResponseMapper;
 import com.pragma.powerup.domain.api.IAssignOrderServicePort;
 import com.pragma.powerup.domain.api.ICreateOrderServicePort;
 import com.pragma.powerup.domain.api.IListOrdersServicePort;
+import com.pragma.powerup.domain.api.INotifyOrderReadyServicePort;
 import com.pragma.powerup.domain.model.OrderModel;
 import com.pragma.powerup.domain.model.OrderStatus;
 import com.pragma.powerup.domain.model.PagedResult;
@@ -24,6 +25,7 @@ public class OrderHandler implements IOrderHandler {
     private final ICreateOrderServicePort createOrderServicePort;
     private final IListOrdersServicePort listOrdersServicePort;
     private final IAssignOrderServicePort assignOrderServicePort;
+    private final INotifyOrderReadyServicePort notifyOrderReadyServicePort;
     private final IOrderRequestMapper orderRequestMapper;
     private final IOrderResponseMapper orderResponseMapper;
 
@@ -37,6 +39,11 @@ public class OrderHandler implements IOrderHandler {
     @Override
     public OrderResponseDto assignOrder(Long orderId) {
         return orderResponseMapper.toResponse(assignOrderServicePort.assignOrder(orderId));
+    }
+
+    @Override
+    public OrderResponseDto notifyOrderReady(Long orderId) {
+        return orderResponseMapper.toResponse(notifyOrderReadyServicePort.notifyOrderReady(orderId));
     }
 
     @Override

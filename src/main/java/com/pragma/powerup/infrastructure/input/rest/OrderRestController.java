@@ -42,6 +42,12 @@ public class OrderRestController implements IOrderRestControllerDocs {
     }
 
     @Override
+    @PatchMapping("/{orderId}/ready")
+    public ResponseEntity<OrderResponseDto> notifyOrderReady(@PathVariable Long orderId) {
+        return ResponseEntity.ok(orderHandler.notifyOrderReady(orderId));
+    }
+
+    @Override
     @GetMapping
     public ResponseEntity<PagedResponseDto<OrderResponseDto>> listOrders(
             @RequestParam OrderStatus status,

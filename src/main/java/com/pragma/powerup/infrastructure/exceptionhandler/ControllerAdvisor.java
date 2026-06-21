@@ -215,6 +215,12 @@ public class ControllerAdvisor {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(ex));
     }
 
+    @ExceptionHandler(OrderNotInPreparationException.class)
+    public ResponseEntity<Map<String, Object>> handleOrderNotInPreparationException(
+            OrderNotInPreparationException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(ex));
+    }
+
     // endregion
 
     // region Infrastructure — technical and unexpected errors

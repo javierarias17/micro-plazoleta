@@ -35,7 +35,7 @@ public class UserServiceAdapter implements IUserServicePort {
         } catch (HttpClientErrorException.NotFound e) {
             return false;
         } catch (ResourceAccessException e) {
-            throw new TechnicalException(TechnicalMessageConstants.USER_VALIDATION_UNAVAILABLE);
+            throw new TechnicalException(TechnicalMessageConstants.USER_UNAVAILABLE);
         }
     }
 
@@ -47,7 +47,7 @@ public class UserServiceAdapter implements IUserServicePort {
             Long restaurantId = restTemplate.exchange(url, HttpMethod.GET, request, Long.class).getBody();
             return Optional.ofNullable(restaurantId);
         } catch (ResourceAccessException e) {
-            throw new TechnicalException(TechnicalMessageConstants.USER_VALIDATION_UNAVAILABLE);
+            throw new TechnicalException(TechnicalMessageConstants.USER_UNAVAILABLE);
         }
     }
 

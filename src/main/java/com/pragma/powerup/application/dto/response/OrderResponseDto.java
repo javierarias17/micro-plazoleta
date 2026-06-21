@@ -16,5 +16,6 @@ public class OrderResponseDto {
     private LocalDate date;
     private String status;
     private Long restaurantId;
+    private String securityPin;
     private List<OrderDishResponseDto> dishes;
 }
