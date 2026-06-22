@@ -110,6 +110,16 @@ public class OrderModelFactory {
                 .build();
     }
 
+    public static OrderModel createCancelledOrder() {
+        return OrderModel.builder()
+                .id(1L)
+                .clientId(10L)
+                .date(LocalDate.of(2024, Month.JANUARY, 1))
+                .status(OrderStatus.CANCELADO)
+                .restaurantId(1L)
+                .build();
+    }
+
     public static PagedResult<OrderModel> createOrderPagedResult() {
         List<OrderModel> orders = List.of(
                 OrderModel.builder().id(1L).clientId(10L).date(LocalDate.of(2024, Month.JANUARY, 1))

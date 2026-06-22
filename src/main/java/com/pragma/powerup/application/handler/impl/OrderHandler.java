@@ -8,6 +8,7 @@ import com.pragma.powerup.application.handler.IOrderHandler;
 import com.pragma.powerup.application.mapper.IOrderRequestMapper;
 import com.pragma.powerup.application.mapper.IOrderResponseMapper;
 import com.pragma.powerup.domain.api.IAssignOrderServicePort;
+import com.pragma.powerup.domain.api.ICancelOrderServicePort;
 import com.pragma.powerup.domain.api.ICreateOrderServicePort;
 import com.pragma.powerup.domain.api.IDeliverOrderServicePort;
 import com.pragma.powerup.domain.api.IListOrdersServicePort;
@@ -29,6 +30,7 @@ public class OrderHandler implements IOrderHandler {
     private final IAssignOrderServicePort assignOrderServicePort;
     private final INotifyOrderReadyServicePort notifyOrderReadyServicePort;
     private final IDeliverOrderServicePort deliverOrderServicePort;
+    private final ICancelOrderServicePort cancelOrderServicePort;
     private final IOrderRequestMapper orderRequestMapper;
     private final IOrderResponseMapper orderResponseMapper;
 
@@ -53,6 +55,11 @@ public class OrderHandler implements IOrderHandler {
     public OrderResponseDto deliverOrder(Long orderId, DeliverOrderRequestDto deliverOrderRequestDto) {
         return orderResponseMapper.toResponse(
                 deliverOrderServicePort.deliverOrder(orderId, deliverOrderRequestDto.getSecurityPin()));
+    }
+
+    @Override
+    public OrderResponseDto cancelOrder(Long orderId) {
+        return orderResponseMapper.toResponse(cancelOrderServicePort.cancelOrder(orderId));
     }
 
     @Override

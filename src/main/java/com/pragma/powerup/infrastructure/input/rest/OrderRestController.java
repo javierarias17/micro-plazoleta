@@ -56,6 +56,12 @@ public class OrderRestController implements IOrderRestControllerDocs {
     }
 
     @Override
+    @PatchMapping("/{orderId}/cancel")
+    public ResponseEntity<OrderResponseDto> cancelOrder(@PathVariable Long orderId) {
+        return ResponseEntity.ok(orderHandler.cancelOrder(orderId));
+    }
+
+    @Override
     @GetMapping
     public ResponseEntity<PagedResponseDto<OrderResponseDto>> listOrders(
             @RequestParam OrderStatus status,

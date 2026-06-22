@@ -30,6 +30,7 @@ public class SecurityConfiguration {
     private static final String ENDPOINT_ORDER_LIST = "/api/v1/order";
     private static final String ENDPOINT_ORDER_ASSIGN = "/api/v1/order/*/assign";
     private static final String ENDPOINT_ORDER_READY = "/api/v1/order/*/ready";
+    private static final String ENDPOINT_ORDER_CANCEL = "/api/v1/order/*/cancel";
 
     private static final String SWAGGER_API_DOCS_PATH = "/v3/api-docs/**";
     private static final String SWAGGER_UI_PATH = "/swagger-ui/**";
@@ -66,6 +67,7 @@ public class SecurityConfiguration {
                         .antMatchers(HttpMethod.GET, ENDPOINT_ORDER_LIST).hasRole(ROLE_EMPLOYEE)
                         .antMatchers(HttpMethod.PATCH, ENDPOINT_ORDER_ASSIGN).hasRole(ROLE_EMPLOYEE)
                         .antMatchers(HttpMethod.PATCH, ENDPOINT_ORDER_READY).hasRole(ROLE_EMPLOYEE)
+                        .antMatchers(HttpMethod.PATCH, ENDPOINT_ORDER_CANCEL).hasRole(ROLE_CUSTOMER)
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

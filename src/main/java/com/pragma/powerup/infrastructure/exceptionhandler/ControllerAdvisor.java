@@ -233,6 +233,12 @@ public class ControllerAdvisor {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(ex));
     }
 
+    @ExceptionHandler(OrderNotCancellableException.class)
+    public ResponseEntity<Map<String, Object>> handleOrderNotCancellableException(
+            OrderNotCancellableException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(ex));
+    }
+
     // endregion
 
     // region Infrastructure — technical and unexpected errors

@@ -160,4 +160,31 @@ public interface IOrderRestControllerDocs {
     ResponseEntity<OrderResponseDto> deliverOrder(
             @Parameter(description = "ID of the order to deliver", required = true) Long orderId,
             DeliverOrderRequestDto deliverOrderRequestDto);
+
+    @Operation(summary = "Cancel order", description = "Allows a customer to cancel their own order. Only orders in PENDING status can be cancelled.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Order cancelled successfully",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = OrderResponseDto.class))),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"No authentication token provided.\"}"))),
+            @ApiResponse(responseCode = "403", description = "Authenticated user does not have CUSTOMER role or the order does not belong to the customer",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = {
+                                    @ExampleObject(name = "No role", value = "{\"message\":\"Access Denied\"}"),
+                                    @ExampleObject(name = "Not owner", value = "{\"message\":\"Access Denied\"}")
+                            })),
+            @ApiResponse(responseCode = "404", description = "Order not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"Business validation failed\",\"errors\":[{\"field\":\"orderId\",\"message\":\"The order does not exist\"}]}"))),
+            @ApiResponse(responseCode = "409", description = "Order is not in PENDING status",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"We are sorry, your order is already being prepared and cannot be cancelled\"}"))),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"An unexpected error occurred. Please contact the administrator.\"}")))
+    })
+    ResponseEntity<OrderResponseDto> cancelOrder(
+            @Parameter(description = "ID of the order to cancel", required = true) Long orderId);
 }
