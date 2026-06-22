@@ -25,9 +25,7 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     @Override
     public OrderModel saveOrder(OrderModel orderModel) {
         OrderEntity orderEntity = orderEntityMapper.toEntity(orderModel);
-        for (OrderDishEntity dish : orderEntity.getOrderDishes()) {
-            dish.setOrder(orderEntity);
-        }
+        orderEntity.getOrderDishes().forEach(dish -> dish.setOrder(orderEntity));
         return orderEntityMapper.toModel(orderRepository.save(orderEntity));
     }
 

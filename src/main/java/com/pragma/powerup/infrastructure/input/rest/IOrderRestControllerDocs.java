@@ -1,5 +1,6 @@
 package com.pragma.powerup.infrastructure.input.rest;
 
+import com.pragma.powerup.application.dto.request.DeliverOrderRequestDto;
 import com.pragma.powerup.application.dto.request.OrderRequestDto;
 import com.pragma.powerup.application.dto.response.OrderResponseDto;
 import com.pragma.powerup.application.dto.response.PagedResponseDto;
@@ -125,4 +126,38 @@ public interface IOrderRestControllerDocs {
     })
     ResponseEntity<OrderResponseDto> notifyOrderReady(
             @Parameter(description = "ID of the order to mark as ready", required = true) Long orderId);
+
+    @Operation(summary = "Deliver order", description = "Marks a READY order as DELIVERED. The employee must provide the security PIN that was sent to the customer when the order was marked as ready. Only orders in READY status can be delivered.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Order delivered successfully",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = OrderResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "Missing or blank security PIN",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"Validation failed\",\"errors\":[{\"field\":\"securityPin\",\"message\":\"Security PIN is required\"}]}"))),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"No authentication token provided.\"}"))),
+            @ApiResponse(responseCode = "403", description = "Employee not linked to the order's restaurant or order does not belong to employee's restaurant",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = {
+                                    @ExampleObject(name = "No role", value = "{\"message\":\"Access Denied\"}"),
+                                    @ExampleObject(name = "Order not from restaurant", value = "{\"message\":\"Business validation failed\",\"errors\":[{\"field\":\"orderId\",\"message\":\"The order does not belong to your restaurant\"}]}")
+                            })),
+            @ApiResponse(responseCode = "404", description = "Order not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"Business validation failed\",\"errors\":[{\"field\":\"orderId\",\"message\":\"The order does not exist\"}]}"))),
+            @ApiResponse(responseCode = "409", description = "Order is not in READY status or security PIN is incorrect",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = {
+                                    @ExampleObject(name = "Not ready", value = "{\"message\":\"Business validation failed\",\"errors\":[{\"field\":\"orderId\",\"message\":\"The order cannot be delivered because it is not in READY status\"}]}"),
+                                    @ExampleObject(name = "Wrong PIN", value = "{\"message\":\"Business validation failed\",\"errors\":[{\"field\":\"securityPin\",\"message\":\"The security PIN is incorrect\"}]}")
+                            })),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"message\":\"An unexpected error occurred. Please contact the administrator.\"}")))
+    })
+    ResponseEntity<OrderResponseDto> deliverOrder(
+            @Parameter(description = "ID of the order to deliver", required = true) Long orderId,
+            DeliverOrderRequestDto deliverOrderRequestDto);
 }

@@ -26,4 +26,5 @@ public class FieldConstants {
     public static final String QUANTITY = "quantity";
     public static final String ACTIVE = "active";
     public static final String ORDER_ID = "orderId";
+    public static final String SECURITY_PIN = "securityPin";
 }

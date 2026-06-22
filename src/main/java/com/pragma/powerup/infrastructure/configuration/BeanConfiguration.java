@@ -1,6 +1,7 @@
 package com.pragma.powerup.infrastructure.configuration;
 
 import com.pragma.powerup.domain.api.IAssignOrderServicePort;
+import com.pragma.powerup.domain.api.IDeliverOrderServicePort;
 import com.pragma.powerup.domain.api.INotifyOrderReadyServicePort;
 import com.pragma.powerup.domain.api.ICreateDishServicePort;
 import com.pragma.powerup.domain.api.ICreateOrderServicePort;
@@ -19,6 +20,7 @@ import com.pragma.powerup.domain.spi.IOrderPersistencePort;
 import com.pragma.powerup.domain.spi.IRestaurantPersistencePort;
 import com.pragma.powerup.domain.spi.IUserServicePort;
 import com.pragma.powerup.domain.usecase.AssignOrderUseCase;
+import com.pragma.powerup.domain.usecase.DeliverOrderUseCase;
 import com.pragma.powerup.domain.usecase.NotifyOrderReadyUseCase;
 import com.pragma.powerup.domain.usecase.CreateDishUseCase;
 import com.pragma.powerup.domain.usecase.CreateOrderUseCase;
@@ -167,5 +169,10 @@ public class BeanConfiguration {
     public INotifyOrderReadyServicePort notifyOrderReadyServicePort() {
         return new NotifyOrderReadyUseCase(orderPersistencePort(), userServicePort(),
                 authenticatedUserPort, notifyClientPort());
+    }
+
+    @Bean
+    public IDeliverOrderServicePort deliverOrderServicePort() {
+        return new DeliverOrderUseCase(orderPersistencePort(), userServicePort(), authenticatedUserPort);
     }
 }

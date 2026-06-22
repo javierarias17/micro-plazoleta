@@ -221,6 +221,18 @@ public class ControllerAdvisor {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(ex));
     }
 
+    @ExceptionHandler(OrderNotReadyException.class)
+    public ResponseEntity<Map<String, Object>> handleOrderNotReadyException(
+            OrderNotReadyException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(ex));
+    }
+
+    @ExceptionHandler(InvalidSecurityPinException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidSecurityPinException(
+            InvalidSecurityPinException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(ex));
+    }
+
     // endregion
 
     // region Infrastructure — technical and unexpected errors

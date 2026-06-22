@@ -1,5 +1,6 @@
 package com.pragma.powerup.infrastructure.input.rest;
 
+import com.pragma.powerup.application.dto.request.DeliverOrderRequestDto;
 import com.pragma.powerup.application.dto.request.OrderRequestDto;
 import com.pragma.powerup.application.dto.response.OrderResponseDto;
 import com.pragma.powerup.application.dto.response.PagedResponseDto;
@@ -45,6 +46,13 @@ public class OrderRestController implements IOrderRestControllerDocs {
     @PatchMapping("/{orderId}/ready")
     public ResponseEntity<OrderResponseDto> notifyOrderReady(@PathVariable Long orderId) {
         return ResponseEntity.ok(orderHandler.notifyOrderReady(orderId));
+    }
+
+    @Override
+    @PatchMapping("/{orderId}/deliver")
+    public ResponseEntity<OrderResponseDto> deliverOrder(@PathVariable Long orderId,
+            @Valid @RequestBody DeliverOrderRequestDto deliverOrderRequestDto) {
+        return ResponseEntity.ok(orderHandler.deliverOrder(orderId, deliverOrderRequestDto));
     }
 
     @Override

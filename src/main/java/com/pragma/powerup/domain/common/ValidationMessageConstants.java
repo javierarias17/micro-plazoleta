@@ -41,4 +41,6 @@ public class ValidationMessageConstants {
     public static final String MSG_QUANTITY_REQUIRED = "Quantity is required";
     public static final String MSG_QUANTITY_POSITIVE = "Quantity must be a positive number";
     public static final String MSG_ACTIVE_REQUIRED = "Active status is required";
+    public static final String MSG_ORDER_ID_REQUIRED = "Order ID is required";
+    public static final String MSG_SECURITY_PIN_REQUIRED = "Security PIN is required";
 }
