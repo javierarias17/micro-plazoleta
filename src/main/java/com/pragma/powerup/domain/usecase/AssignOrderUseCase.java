@@ -8,8 +8,11 @@ import com.pragma.powerup.domain.model.OrderModel;
 import com.pragma.powerup.domain.model.OrderStatus;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.IOrderPersistencePort;
+import com.pragma.powerup.domain.spi.ITraceabilityPort;
 import com.pragma.powerup.domain.spi.IUserServicePort;
 
+
+import com.pragma.powerup.domain.common.DateUtil;
 
 import java.util.Map;
 
@@ -18,13 +21,16 @@ public class AssignOrderUseCase implements IAssignOrderServicePort {
     private final IOrderPersistencePort orderPersistencePort;
     private final IUserServicePort userServicePort;
     private final IAuthenticatedUserPort authenticatedUserPort;
+    private final ITraceabilityPort traceabilityPort;
 
     public AssignOrderUseCase(IOrderPersistencePort orderPersistencePort,
             IUserServicePort userServicePort,
-            IAuthenticatedUserPort authenticatedUserPort) {
+            IAuthenticatedUserPort authenticatedUserPort,
+            ITraceabilityPort traceabilityPort) {
         this.orderPersistencePort = orderPersistencePort;
         this.userServicePort = userServicePort;
         this.authenticatedUserPort = authenticatedUserPort;
+        this.traceabilityPort = traceabilityPort;
     }
 
     @Override
@@ -53,8 +59,12 @@ public class AssignOrderUseCase implements IAssignOrderServicePort {
         }
 
         order.setChefId(employeeId);
+        OrderStatus previousStatus = order.getStatus();
         order.setStatus(OrderStatus.EN_PREPARACION);
 
-        return orderPersistencePort.updateOrder(order);
+        OrderModel updatedOrder = orderPersistencePort.updateOrder(order);
+        traceabilityPort.logStatusChange(orderId, restaurantId, order.getClientId(), employeeId,
+                previousStatus, order.getStatus(), DateUtil.getCurrentDateTime());
+        return updatedOrder;
     }
 }

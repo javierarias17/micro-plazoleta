@@ -9,9 +9,12 @@ import com.pragma.powerup.domain.model.OrderStatus;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.INotifyClientPort;
 import com.pragma.powerup.domain.spi.IOrderPersistencePort;
+import com.pragma.powerup.domain.spi.ITraceabilityPort;
 import com.pragma.powerup.domain.spi.IUserServicePort;
 
 import java.security.SecureRandom;
+import com.pragma.powerup.domain.common.DateUtil;
+
 import java.util.Map;
 
 public class NotifyOrderReadyUseCase implements INotifyOrderReadyServicePort {
@@ -22,15 +25,18 @@ public class NotifyOrderReadyUseCase implements INotifyOrderReadyServicePort {
     private final IUserServicePort userServicePort;
     private final IAuthenticatedUserPort authenticatedUserPort;
     private final INotifyClientPort notifyClientPort;
+    private final ITraceabilityPort traceabilityPort;
 
     public NotifyOrderReadyUseCase(IOrderPersistencePort orderPersistencePort,
             IUserServicePort userServicePort,
             IAuthenticatedUserPort authenticatedUserPort,
-            INotifyClientPort notifyClientPort) {
+            INotifyClientPort notifyClientPort,
+            ITraceabilityPort traceabilityPort) {
         this.orderPersistencePort = orderPersistencePort;
         this.userServicePort = userServicePort;
         this.authenticatedUserPort = authenticatedUserPort;
         this.notifyClientPort = notifyClientPort;
+        this.traceabilityPort = traceabilityPort;
     }
 
     @Override
@@ -57,10 +63,13 @@ public class NotifyOrderReadyUseCase implements INotifyOrderReadyServicePort {
         }
 
         order.setSecurityPin(generatePin());
+        OrderStatus previousStatus = order.getStatus();
         order.setStatus(OrderStatus.LISTO);
         OrderModel savedOrder = orderPersistencePort.updateOrder(order);
 
         notifyClientPort.notify(order.getClientId(), order.getSecurityPin());
+        traceabilityPort.logStatusChange(orderId, restaurantId, order.getClientId(), employeeId,
+                previousStatus, order.getStatus(), DateUtil.getCurrentDateTime());
 
         return savedOrder;
     }

@@ -10,6 +10,9 @@ import com.pragma.powerup.domain.model.OrderModel;
 import com.pragma.powerup.domain.model.OrderStatus;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.IOrderPersistencePort;
+import com.pragma.powerup.domain.spi.ITraceabilityPort;
+
+import com.pragma.powerup.domain.common.DateUtil;
 
 import java.util.Map;
 
@@ -17,11 +20,14 @@ public class CancelOrderUseCase implements ICancelOrderServicePort {
 
     private final IOrderPersistencePort orderPersistencePort;
     private final IAuthenticatedUserPort authenticatedUserPort;
+    private final ITraceabilityPort traceabilityPort;
 
     public CancelOrderUseCase(IOrderPersistencePort orderPersistencePort,
-            IAuthenticatedUserPort authenticatedUserPort) {
+            IAuthenticatedUserPort authenticatedUserPort,
+            ITraceabilityPort traceabilityPort) {
         this.orderPersistencePort = orderPersistencePort;
         this.authenticatedUserPort = authenticatedUserPort;
+        this.traceabilityPort = traceabilityPort;
     }
 
     @Override
@@ -36,8 +42,12 @@ public class CancelOrderUseCase implements ICancelOrderServicePort {
         this.validateOwnership(order, customerId);
         this.validateCancellableStatus(order);
 
+        OrderStatus previousStatus = order.getStatus();
         order.setStatus(OrderStatus.CANCELADO);
-        return orderPersistencePort.updateOrder(order);
+        OrderModel updatedOrder = orderPersistencePort.updateOrder(order);
+        traceabilityPort.logStatusChange(orderId, order.getRestaurantId(), order.getClientId(), null,
+                previousStatus, order.getStatus(), DateUtil.getCurrentDateTime());
+        return updatedOrder;
     }
 
     private void validateOwnership(OrderModel order, Long customerId) {

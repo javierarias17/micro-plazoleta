@@ -20,20 +20,20 @@ import java.util.Map;
 public class MessagingAdapter implements INotifyClientPort {
 
     private static final String ENDPOINT_SEND_SMS = "/api/v1/sms";
-    private static final String FIELD_CLIENT_ID = "clientId";
+    private static final String FIELD_CUSTOMER_ID = "customerId";
     private static final String FIELD_PIN = "pin";
 
     private final RestTemplate restTemplate;
     private final String messagingServiceUrl;
 
     @Override
-    public void notify(Long clientId, String pin) {
+    public void notify(Long customerId, String pin) {
         try {
             String url = messagingServiceUrl + ENDPOINT_SEND_SMS;
             HttpHeaders headers = buildAuthHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(
-                    Map.of(FIELD_CLIENT_ID, clientId, FIELD_PIN, pin), headers);
+                    Map.of(FIELD_CUSTOMER_ID, customerId, FIELD_PIN, pin), headers);
             restTemplate.postForEntity(url, request, Void.class);
         } catch (HttpServerErrorException e) {
             throw new TechnicalException(e.getMessage());

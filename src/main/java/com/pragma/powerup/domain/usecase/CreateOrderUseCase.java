@@ -14,11 +14,12 @@ import com.pragma.powerup.domain.model.OrderStatus;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.IDishPersistencePort;
 import com.pragma.powerup.domain.spi.IOrderPersistencePort;
+import com.pragma.powerup.domain.spi.ITraceabilityPort;
 import com.pragma.powerup.domain.spi.IRestaurantPersistencePort;
 import com.pragma.powerup.domain.validator.FieldValidator;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
+import com.pragma.powerup.domain.common.DateUtil;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,15 +33,18 @@ public class CreateOrderUseCase implements ICreateOrderServicePort {
     private final IRestaurantPersistencePort restaurantPersistencePort;
     private final IDishPersistencePort dishPersistencePort;
     private final IAuthenticatedUserPort authenticatedUserPort;
+    private final ITraceabilityPort traceabilityPort;
 
     public CreateOrderUseCase(IOrderPersistencePort orderPersistencePort,
             IRestaurantPersistencePort restaurantPersistencePort,
             IDishPersistencePort dishPersistencePort,
-            IAuthenticatedUserPort authenticatedUserPort) {
+            IAuthenticatedUserPort authenticatedUserPort,
+            ITraceabilityPort traceabilityPort) {
         this.orderPersistencePort = orderPersistencePort;
         this.restaurantPersistencePort = restaurantPersistencePort;
         this.dishPersistencePort = dishPersistencePort;
         this.authenticatedUserPort = authenticatedUserPort;
+        this.traceabilityPort = traceabilityPort;
     }
 
     @Override
@@ -51,10 +55,12 @@ public class CreateOrderUseCase implements ICreateOrderServicePort {
         this.validateBusinessRules(orderModel, clientId);
         
         orderModel.setClientId(clientId);
-        orderModel.setDate(LocalDate.now(ZoneId.systemDefault()));
+        orderModel.setDate(DateUtil.getCurrentDate());
         orderModel.setStatus(OrderStatus.PENDIENTE);
 
-        return orderPersistencePort.saveOrder(orderModel);
+        OrderModel savedOrder = orderPersistencePort.saveOrder(orderModel);
+        traceabilityPort.logStatusChange(savedOrder.getId(), savedOrder.getRestaurantId(), clientId, null, null, savedOrder.getStatus(), DateUtil.getCurrentDateTime());
+        return savedOrder;
     }
 
     private void validateFields(OrderModel orderModel) {

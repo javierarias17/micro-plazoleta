@@ -8,4 +8,5 @@ public class TechnicalMessageConstants {
 
     public static final String USER_UNAVAILABLE = "User service is unavailable";
     public static final String MESSAGING_UNAVAILABLE = "Messaging service is unavailable";
+    public static final String TRACEABILITY_UNAVAILABLE = "Traceability service is unavailable";
 }

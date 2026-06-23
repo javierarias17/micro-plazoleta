@@ -18,6 +18,7 @@ import com.pragma.powerup.domain.spi.ICategoryPersistencePort;
 import com.pragma.powerup.domain.spi.IDishPersistencePort;
 import com.pragma.powerup.domain.spi.INotifyClientPort;
 import com.pragma.powerup.domain.spi.IOrderPersistencePort;
+import com.pragma.powerup.domain.spi.ITraceabilityPort;
 import com.pragma.powerup.domain.spi.IRestaurantPersistencePort;
 import com.pragma.powerup.domain.spi.IUserServicePort;
 import com.pragma.powerup.domain.usecase.AssignOrderUseCase;
@@ -33,8 +34,9 @@ import com.pragma.powerup.domain.usecase.ListRestaurantsUseCase;
 import com.pragma.powerup.domain.usecase.ToggleDishStatusUseCase;
 import com.pragma.powerup.domain.usecase.UpdateDishUseCase;
 import com.pragma.powerup.domain.usecase.ValidateRestaurantOwnerUseCase;
-import com.pragma.powerup.infrastructure.out.http.adapter.UserServiceAdapter;
 import com.pragma.powerup.infrastructure.out.http.adapter.MessagingAdapter;
+import com.pragma.powerup.infrastructure.out.http.adapter.TraceabilityAdapter;
+import com.pragma.powerup.infrastructure.out.http.adapter.UserServiceAdapter;
 import com.pragma.powerup.infrastructure.out.jpa.adapter.CategoryJpaAdapter;
 import com.pragma.powerup.infrastructure.out.jpa.adapter.DishJpaAdapter;
 import com.pragma.powerup.infrastructure.out.jpa.adapter.OrderJpaAdapter;
@@ -76,6 +78,9 @@ public class BeanConfiguration {
 
     @Value("${adapter.micro-messaging.url}")
     private String microMessagingUrl;
+
+    @Value("${adapter.micro-traceability.url}")
+    private String microTraceabilityUrl;
 
     @Bean
     public RestTemplate restTemplate() {
@@ -149,7 +154,7 @@ public class BeanConfiguration {
     @Bean
     public ICreateOrderServicePort createOrderServicePort() {
         return new CreateOrderUseCase(orderPersistencePort(), restaurantPersistencePort(), dishPersistencePort(),
-                authenticatedUserPort);
+                authenticatedUserPort, traceabilityPort());
     }
 
     @Bean
@@ -159,7 +164,8 @@ public class BeanConfiguration {
 
     @Bean
     public IAssignOrderServicePort assignOrderServicePort() {
-        return new AssignOrderUseCase(orderPersistencePort(), userServicePort(), authenticatedUserPort);
+        return new AssignOrderUseCase(orderPersistencePort(), userServicePort(), authenticatedUserPort,
+                traceabilityPort());
     }
 
     @Bean
@@ -168,18 +174,24 @@ public class BeanConfiguration {
     }
 
     @Bean
+    public ITraceabilityPort traceabilityPort() {
+        return new TraceabilityAdapter(restTemplate(), microTraceabilityUrl);
+    }
+
+    @Bean
     public INotifyOrderReadyServicePort notifyOrderReadyServicePort() {
         return new NotifyOrderReadyUseCase(orderPersistencePort(), userServicePort(),
-                authenticatedUserPort, notifyClientPort());
+                authenticatedUserPort, notifyClientPort(), traceabilityPort());
     }
 
     @Bean
     public IDeliverOrderServicePort deliverOrderServicePort() {
-        return new DeliverOrderUseCase(orderPersistencePort(), userServicePort(), authenticatedUserPort);
+        return new DeliverOrderUseCase(orderPersistencePort(), userServicePort(), authenticatedUserPort,
+                traceabilityPort());
     }
 
     @Bean
     public ICancelOrderServicePort cancelOrderServicePort() {
-        return new CancelOrderUseCase(orderPersistencePort(), authenticatedUserPort);
+        return new CancelOrderUseCase(orderPersistencePort(), authenticatedUserPort, traceabilityPort());
     }
 }
