@@ -1,5 +1,5 @@
 package com.pragma.powerup.domain.spi;
 
 public interface INotifyClientPort {
-    void notify(Long clientId, String pin);
+    void sendSms(Long clientId, String pin);
 }

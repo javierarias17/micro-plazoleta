@@ -37,7 +37,7 @@ public class AssignOrderUseCase implements IAssignOrderServicePort {
     public OrderModel assignOrder(Long orderId) {
         Long employeeId = authenticatedUserPort.getAuthenticatedUserId();
 
-        Long restaurantId = userServicePort.findRestaurantIdByEmployeeId(employeeId)
+        Long restaurantId = userServicePort.findRestaurantIdByEmployee(employeeId)
                 .orElseThrow(() -> new RestaurantNotFoundException(FunctionalMessageConstants.RESTAURANT_NOT_FOUND,
                         Map.of()));
 
@@ -63,7 +63,7 @@ public class AssignOrderUseCase implements IAssignOrderServicePort {
         order.setStatus(OrderStatus.EN_PREPARACION);
 
         OrderModel updatedOrder = orderPersistencePort.updateOrder(order);
-        traceabilityPort.logStatusChange(orderId, restaurantId, order.getClientId(), employeeId,
+        traceabilityPort.saveOrderLog(orderId, restaurantId, order.getClientId(), employeeId,
                 previousStatus, order.getStatus(), DateUtil.getCurrentDateTime());
         return updatedOrder;
     }

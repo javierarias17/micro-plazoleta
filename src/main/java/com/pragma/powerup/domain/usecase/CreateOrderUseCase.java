@@ -59,7 +59,7 @@ public class CreateOrderUseCase implements ICreateOrderServicePort {
         orderModel.setStatus(OrderStatus.PENDIENTE);
 
         OrderModel savedOrder = orderPersistencePort.saveOrder(orderModel);
-        traceabilityPort.logStatusChange(savedOrder.getId(), savedOrder.getRestaurantId(), clientId, null, null, savedOrder.getStatus(), DateUtil.getCurrentDateTime());
+        traceabilityPort.saveOrderLog(savedOrder.getId(), savedOrder.getRestaurantId(), clientId, null, null, savedOrder.getStatus(), DateUtil.getCurrentDateTime());
         return savedOrder;
     }
 

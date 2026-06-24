@@ -19,6 +19,8 @@ import java.util.Map;
 
 public class NotifyOrderReadyUseCase implements INotifyOrderReadyServicePort {
 
+    private static final int MIN_SECURITY_PIN = 100000;
+    private static final int SECURITY_PIN_RANGE = 900000;
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private final IOrderPersistencePort orderPersistencePort;
@@ -43,7 +45,7 @@ public class NotifyOrderReadyUseCase implements INotifyOrderReadyServicePort {
     public OrderModel notifyOrderReady(Long orderId) {
         Long employeeId = authenticatedUserPort.getAuthenticatedUserId();
 
-        Long restaurantId = userServicePort.findRestaurantIdByEmployeeId(employeeId)
+        Long restaurantId = userServicePort.findRestaurantIdByEmployee(employeeId)
                 .orElseThrow(() -> new RestaurantNotFoundException(FunctionalMessageConstants.RESTAURANT_NOT_FOUND,
                         Map.of()));
 
@@ -73,14 +75,14 @@ public class NotifyOrderReadyUseCase implements INotifyOrderReadyServicePort {
         order.setStatus(OrderStatus.LISTO);
         OrderModel savedOrder = orderPersistencePort.updateOrder(order);
 
-        notifyClientPort.notify(order.getClientId(), order.getSecurityPin());
-        traceabilityPort.logStatusChange(orderId, restaurantId, order.getClientId(), employeeId,
+        notifyClientPort.sendSms(order.getClientId(), order.getSecurityPin());
+        traceabilityPort.saveOrderLog(orderId, restaurantId, order.getClientId(), employeeId,
                 previousStatus, order.getStatus(), DateUtil.getCurrentDateTime());
 
         return savedOrder;
     }
 
     private String generatePin() {
-        return String.valueOf(100000 + RANDOM.nextInt(900000));
+        return String.valueOf(MIN_SECURITY_PIN + RANDOM.nextInt(SECURITY_PIN_RANGE));
     }
 }

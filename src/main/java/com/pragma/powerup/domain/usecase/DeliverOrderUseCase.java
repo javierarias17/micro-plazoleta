@@ -46,7 +46,7 @@ public class DeliverOrderUseCase implements IDeliverOrderServicePort {
 
         Long employeeId = authenticatedUserPort.getAuthenticatedUserId();
 
-        Long restaurantId = userServicePort.findRestaurantIdByEmployeeId(employeeId)
+        Long restaurantId = userServicePort.findRestaurantIdByEmployee(employeeId)
                 .orElseThrow(() -> new RestaurantNotFoundException(FunctionalMessageConstants.RESTAURANT_NOT_FOUND,
                         Map.of()));
 
@@ -80,7 +80,7 @@ public class DeliverOrderUseCase implements IDeliverOrderServicePort {
         OrderStatus previousStatus = order.getStatus();
         order.setStatus(OrderStatus.ENTREGADO);
         OrderModel updatedOrder = orderPersistencePort.updateOrder(order);
-        traceabilityPort.logStatusChange(orderId, restaurantId, order.getClientId(), employeeId,
+        traceabilityPort.saveOrderLog(orderId, restaurantId, order.getClientId(), employeeId,
                 previousStatus, order.getStatus(), DateUtil.getCurrentDateTime());
         return updatedOrder;
     }

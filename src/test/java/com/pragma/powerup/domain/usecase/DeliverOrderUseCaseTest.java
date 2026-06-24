@@ -71,7 +71,7 @@ class DeliverOrderUseCaseTest {
         OrderModel deliveredOrder = OrderModelFactory.createDeliveredOrder();
 
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(readyOrder));
         when(orderPersistencePort.updateOrder(any(OrderModel.class))).thenReturn(deliveredOrder);
 
@@ -105,7 +105,7 @@ class DeliverOrderUseCaseTest {
     @Test
     void Expect_RestaurantNotFoundException_When_EmployeeHasNoRestaurant() {
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.empty());
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID)).thenReturn(Optional.empty());
 
         assertThrows(RestaurantNotFoundException.class,
                 () -> deliverOrderUseCase.deliverOrder(ORDER_ID, CORRECT_PIN));
@@ -116,7 +116,7 @@ class DeliverOrderUseCaseTest {
     @Test
     void Expect_OrderNotFoundException_When_OrderDoesNotExist() {
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.empty());
 
         assertThrows(OrderNotFoundException.class,
@@ -130,7 +130,7 @@ class DeliverOrderUseCaseTest {
         OrderModel orderFromOtherRestaurant = OrderModelFactory.createSavedOrderForRestaurant(OTHER_RESTAURANT_ID);
 
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(orderFromOtherRestaurant));
 
         assertThrows(ForbiddenException.class,
@@ -144,7 +144,7 @@ class DeliverOrderUseCaseTest {
         OrderModel orderAssignedToOther = OrderModelFactory.createSavedReadyOrderAssignedToOtherEmployee();
 
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(orderAssignedToOther));
 
         assertThrows(ForbiddenException.class,
@@ -158,7 +158,7 @@ class DeliverOrderUseCaseTest {
         OrderModel pendingOrder = OrderModelFactory.createSavedOrder();
 
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(pendingOrder));
 
         assertThrows(OrderNotReadyException.class,
@@ -170,7 +170,7 @@ class DeliverOrderUseCaseTest {
     @Test
     void Expect_InvalidSecurityPinException_When_PinDoesNotMatch() {
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(readyOrder));
 
         assertThrows(InvalidSecurityPinException.class,

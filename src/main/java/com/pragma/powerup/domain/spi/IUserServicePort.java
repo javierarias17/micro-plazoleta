@@ -4,5 +4,5 @@ import java.util.Optional;
 
 public interface IUserServicePort {
     boolean isOwner(Long userId);
-    Optional<Long> findRestaurantIdByEmployeeId(Long employeeId);
+    Optional<Long> findRestaurantIdByEmployee(Long employeeId);
 }

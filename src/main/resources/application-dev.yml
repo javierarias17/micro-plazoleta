@@ -16,12 +16,24 @@ spring:
 
 adapter:
   micro-users:
-    timeout: 5000
     url: ${USERS_SERVICE_URL}
   micro-messaging:
     url: ${MESSAGING_SERVICE_URL}
   micro-traceability:
     url: ${TRACEABILITY_SERVICE_URL}
+
+feign:
+  client:
+    config:
+      micro-users:
+        connectTimeout: 5000
+        readTimeout: 5000
+      micro-messaging:
+        connectTimeout: 5000
+        readTimeout: 5000
+      micro-traceability:
+        connectTimeout: 5000
+        readTimeout: 5000
 
 jwt:
   secret: ${JWT_SECRET}

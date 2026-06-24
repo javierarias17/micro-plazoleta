@@ -62,7 +62,7 @@ class AssignOrderUseCaseTest {
         OrderModel assignedOrder = OrderModelFactory.createAssignedOrder();
 
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID))
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID))
                 .thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(pendingOrder));
         when(orderPersistencePort.updateOrder(any(OrderModel.class))).thenReturn(assignedOrder);
@@ -82,7 +82,7 @@ class AssignOrderUseCaseTest {
     void Expect_RestaurantNotFoundException_When_EmployeeHasNoRestaurant() {
         // Arrange
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID))
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID))
                 .thenReturn(Optional.empty());
 
         // Act & Assert
@@ -94,7 +94,7 @@ class AssignOrderUseCaseTest {
     void Expect_OrderNotFoundException_When_OrderDoesNotExist() {
         // Arrange
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID))
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID))
                 .thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.empty());
 
@@ -109,7 +109,7 @@ class AssignOrderUseCaseTest {
         OrderModel orderFromOtherRestaurant = OrderModelFactory.createSavedOrderForRestaurant(OTHER_RESTAURANT_ID);
 
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID))
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID))
                 .thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(orderFromOtherRestaurant));
 
@@ -124,7 +124,7 @@ class AssignOrderUseCaseTest {
         OrderModel orderInPreparation = OrderModelFactory.createSavedOrderInPreparation();
 
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID))
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID))
                 .thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(orderInPreparation));
 

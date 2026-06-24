@@ -37,7 +37,7 @@ public class ListOrdersUseCase implements IListOrdersServicePort {
     public PagedResult<OrderModel> listOrders(OrderStatus status, int page, int pageSize) {
         this.validatePaginationParams(page, pageSize);
 
-        Long restaurantId = userServicePort.findRestaurantIdByEmployeeId(authenticatedUserPort.getAuthenticatedUserId())
+        Long restaurantId = userServicePort.findRestaurantIdByEmployee(authenticatedUserPort.getAuthenticatedUserId())
                 .orElseThrow(() -> new EmployeeNotLinkedToRestaurantException(
                         FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
                         Map.of(FieldConstants.EMPLOYEE_ID,

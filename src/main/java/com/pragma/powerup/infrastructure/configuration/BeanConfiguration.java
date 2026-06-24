@@ -37,6 +37,9 @@ import com.pragma.powerup.domain.usecase.ValidateRestaurantOwnerUseCase;
 import com.pragma.powerup.infrastructure.out.http.adapter.MessagingAdapter;
 import com.pragma.powerup.infrastructure.out.http.adapter.TraceabilityAdapter;
 import com.pragma.powerup.infrastructure.out.http.adapter.UserServiceAdapter;
+import com.pragma.powerup.infrastructure.out.http.client.IMessagingFeignClient;
+import com.pragma.powerup.infrastructure.out.http.client.ITraceabilityFeignClient;
+import com.pragma.powerup.infrastructure.out.http.client.IUserServiceFeignClient;
 import com.pragma.powerup.infrastructure.out.jpa.adapter.CategoryJpaAdapter;
 import com.pragma.powerup.infrastructure.out.jpa.adapter.DishJpaAdapter;
 import com.pragma.powerup.infrastructure.out.jpa.adapter.OrderJpaAdapter;
@@ -50,11 +53,8 @@ import com.pragma.powerup.infrastructure.out.jpa.repository.IDishRepository;
 import com.pragma.powerup.infrastructure.out.jpa.repository.IOrderRepository;
 import com.pragma.powerup.infrastructure.out.jpa.repository.IRestaurantRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @RequiredArgsConstructor
@@ -69,30 +69,23 @@ public class BeanConfiguration {
     private final IAuthenticatedUserPort authenticatedUserPort;
     private final IOrderRepository orderRepository;
     private final IOrderEntityMapper orderEntityMapper;
-
-    @Value("${adapter.micro-users.url}")
-    private String microUsersUrl;
-
-    @Value("${adapter.micro-users.timeout}")
-    private int microUsersTimeout;
-
-    @Value("${adapter.micro-messaging.url}")
-    private String microMessagingUrl;
-
-    @Value("${adapter.micro-traceability.url}")
-    private String microTraceabilityUrl;
-
-    @Bean
-    public RestTemplate restTemplate() {
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(microUsersTimeout);
-        factory.setReadTimeout(microUsersTimeout);
-        return new RestTemplate(factory);
-    }
+    private final IUserServiceFeignClient userServiceFeignClient;
+    private final IMessagingFeignClient messagingFeignClient;
+    private final ITraceabilityFeignClient traceabilityFeignClient;
 
     @Bean
     public IUserServicePort userServicePort() {
-        return new UserServiceAdapter(restTemplate(), microUsersUrl);
+        return new UserServiceAdapter(userServiceFeignClient);
+    }
+
+    @Bean
+    public INotifyClientPort notifyClientPort() {
+        return new MessagingAdapter(messagingFeignClient);
+    }
+
+    @Bean
+    public ITraceabilityPort traceabilityPort() {
+        return new TraceabilityAdapter(traceabilityFeignClient);
     }
 
     @Bean
@@ -166,16 +159,6 @@ public class BeanConfiguration {
     public IAssignOrderServicePort assignOrderServicePort() {
         return new AssignOrderUseCase(orderPersistencePort(), userServicePort(), authenticatedUserPort,
                 traceabilityPort());
-    }
-
-    @Bean
-    public INotifyClientPort notifyClientPort() {
-        return new MessagingAdapter(restTemplate(), microMessagingUrl);
-    }
-
-    @Bean
-    public ITraceabilityPort traceabilityPort() {
-        return new TraceabilityAdapter(restTemplate(), microTraceabilityUrl);
     }
 
     @Bean

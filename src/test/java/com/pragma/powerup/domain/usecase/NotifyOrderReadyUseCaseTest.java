@@ -71,7 +71,7 @@ class NotifyOrderReadyUseCaseTest {
         OrderModel readyOrder = OrderModelFactory.createReadyOrder();
 
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(orderInPreparation));
         when(orderPersistencePort.updateOrder(any(OrderModel.class))).thenReturn(readyOrder);
 
@@ -80,7 +80,7 @@ class NotifyOrderReadyUseCaseTest {
         assertNotNull(result);
         assertEquals(OrderStatus.LISTO, result.getStatus());
         assertNotNull(result.getSecurityPin());
-        verify(notifyClientPort).notify(anyLong(), anyString());
+        verify(notifyClientPort).sendSms(anyLong(), anyString());
     }
 
     // ─── Exception paths
@@ -88,24 +88,24 @@ class NotifyOrderReadyUseCaseTest {
     @Test
     void Expect_RestaurantNotFoundException_When_EmployeeHasNoRestaurant() {
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.empty());
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID)).thenReturn(Optional.empty());
 
         assertThrows(RestaurantNotFoundException.class,
                 () -> notifyOrderReadyUseCase.notifyOrderReady(ORDER_ID));
 
-        verify(notifyClientPort, never()).notify(anyLong(), anyString());
+        verify(notifyClientPort, never()).sendSms(anyLong(), anyString());
     }
 
     @Test
     void Expect_OrderNotFoundException_When_OrderDoesNotExist() {
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.empty());
 
         assertThrows(OrderNotFoundException.class,
                 () -> notifyOrderReadyUseCase.notifyOrderReady(ORDER_ID));
 
-        verify(notifyClientPort, never()).notify(anyLong(), anyString());
+        verify(notifyClientPort, never()).sendSms(anyLong(), anyString());
     }
 
     @Test
@@ -113,13 +113,13 @@ class NotifyOrderReadyUseCaseTest {
         OrderModel orderFromOtherRestaurant = OrderModelFactory.createSavedOrderForRestaurant(OTHER_RESTAURANT_ID);
 
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(orderFromOtherRestaurant));
 
         assertThrows(ForbiddenException.class,
                 () -> notifyOrderReadyUseCase.notifyOrderReady(ORDER_ID));
 
-        verify(notifyClientPort, never()).notify(anyLong(), anyString());
+        verify(notifyClientPort, never()).sendSms(anyLong(), anyString());
     }
 
     @Test
@@ -127,13 +127,13 @@ class NotifyOrderReadyUseCaseTest {
         OrderModel orderAssignedToOther = OrderModelFactory.createSavedOrderInPreparationAssignedToOtherEmployee();
 
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(orderAssignedToOther));
 
         assertThrows(ForbiddenException.class,
                 () -> notifyOrderReadyUseCase.notifyOrderReady(ORDER_ID));
 
-        verify(notifyClientPort, never()).notify(anyLong(), anyString());
+        verify(notifyClientPort, never()).sendSms(anyLong(), anyString());
     }
 
     @Test
@@ -141,12 +141,12 @@ class NotifyOrderReadyUseCaseTest {
         OrderModel pendingOrder = OrderModelFactory.createSavedOrder();
 
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
+        when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(pendingOrder));
 
         assertThrows(OrderNotInPreparationException.class,
                 () -> notifyOrderReadyUseCase.notifyOrderReady(ORDER_ID));
 
-        verify(notifyClientPort, never()).notify(anyLong(), anyString());
+        verify(notifyClientPort, never()).sendSms(anyLong(), anyString());
     }
 }

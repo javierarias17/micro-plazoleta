@@ -61,7 +61,7 @@ class ListOrdersUseCaseTest {
         void When_ValidRequestFromLinkedEmployee_Expect_PagedOrdersReturned() {
                 // Arrange
                 when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-                when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID))
+                when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID))
                                 .thenReturn(Optional.of(RESTAURANT_ID));
                 when(orderPersistencePort.findByRestaurantAndStatus(anyLong(), any(OrderStatus.class), anyInt(),
                                 anyInt()))
@@ -84,7 +84,7 @@ class ListOrdersUseCaseTest {
         void When_ValidRequestFromLinkedEmployee_Expect_AllOrdersHaveCorrectStatus() {
                 // Arrange
                 when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-                when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID))
+                when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID))
                                 .thenReturn(Optional.of(RESTAURANT_ID));
                 when(orderPersistencePort.findByRestaurantAndStatus(anyLong(), any(OrderStatus.class), anyInt(),
                                 anyInt()))
@@ -142,7 +142,7 @@ class ListOrdersUseCaseTest {
         void Expect_EmployeeNotLinkedToRestaurantException_When_EmployeeHasNoRestaurant() {
                 // Arrange
                 when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
-                when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID))
+                when(userServicePort.findRestaurantIdByEmployee(EMPLOYEE_ID))
                                 .thenReturn(Optional.empty());
 
                 // Act & Assert
