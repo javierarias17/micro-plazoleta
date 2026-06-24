@@ -12,6 +12,7 @@ import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.IDishPersistencePort;
 import com.pragma.powerup.domain.spi.IOrderPersistencePort;
 import com.pragma.powerup.domain.spi.IRestaurantPersistencePort;
+import com.pragma.powerup.domain.spi.ITraceabilityPort;
 import com.pragma.powerup.factory.OrderModelFactory;
 import com.pragma.powerup.factory.RestaurantModelFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +50,9 @@ class CreateOrderUseCaseTest {
 
     @Mock
     private IAuthenticatedUserPort authenticatedUserPort;
+
+    @Mock
+    private ITraceabilityPort traceabilityPort;
 
     @InjectMocks
     private CreateOrderUseCase createOrderUseCase;

@@ -23,4 +23,5 @@ public class FunctionalMessageConstants {
     public static final String INVALID_SECURITY_PIN = "The security PIN is incorrect";
     public static final String ORDER_ALREADY_CANCELLED = "The order is already cancelled";
     public static final String ORDER_NOT_CANCELLABLE = "We are sorry, your order is already being prepared and cannot be cancelled";
+    public static final String ORDER_ASSIGNED_TO_ANOTHER_EMPLOYEE = "The order is assigned to another employee";
 }

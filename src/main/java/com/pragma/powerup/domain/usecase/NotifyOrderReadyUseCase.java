@@ -56,6 +56,12 @@ public class NotifyOrderReadyUseCase implements INotifyOrderReadyServicePort {
             throw new ForbiddenException();
         }
 
+        if (!employeeId.equals(order.getChefId())) {
+            throw new ForbiddenException(
+                    FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
+                    Map.of(FieldConstants.ORDER_ID, FunctionalMessageConstants.ORDER_ASSIGNED_TO_ANOTHER_EMPLOYEE));
+        }
+
         if (order.getStatus() != OrderStatus.EN_PREPARACION) {
             throw new OrderNotInPreparationException(
                     FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,

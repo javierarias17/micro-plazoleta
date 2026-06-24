@@ -9,6 +9,7 @@ import com.pragma.powerup.domain.model.OrderStatus;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.INotifyClientPort;
 import com.pragma.powerup.domain.spi.IOrderPersistencePort;
+import com.pragma.powerup.domain.spi.ITraceabilityPort;
 import com.pragma.powerup.domain.spi.IUserServicePort;
 import com.pragma.powerup.factory.OrderModelFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +50,9 @@ class NotifyOrderReadyUseCaseTest {
 
     @Mock
     private INotifyClientPort notifyClientPort;
+
+    @Mock
+    private ITraceabilityPort traceabilityPort;
 
     @InjectMocks
     private NotifyOrderReadyUseCase notifyOrderReadyUseCase;
@@ -111,6 +115,20 @@ class NotifyOrderReadyUseCaseTest {
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
         when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(orderFromOtherRestaurant));
+
+        assertThrows(ForbiddenException.class,
+                () -> notifyOrderReadyUseCase.notifyOrderReady(ORDER_ID));
+
+        verify(notifyClientPort, never()).notify(anyLong(), anyString());
+    }
+
+    @Test
+    void Expect_ForbiddenException_When_OrderIsAssignedToAnotherEmployee() {
+        OrderModel orderAssignedToOther = OrderModelFactory.createSavedOrderInPreparationAssignedToOtherEmployee();
+
+        when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
+        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
+        when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(orderAssignedToOther));
 
         assertThrows(ForbiddenException.class,
                 () -> notifyOrderReadyUseCase.notifyOrderReady(ORDER_ID));

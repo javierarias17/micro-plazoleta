@@ -13,6 +13,7 @@ import java.util.List;
 public class OrderResponseDto {
     private Long id;
     private Long clientId;
+    private Long chefId;
     private LocalDate date;
     private String status;
     private Long restaurantId;

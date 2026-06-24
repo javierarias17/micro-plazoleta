@@ -29,6 +29,7 @@ public class OrderModelFactory {
         return OrderModel.builder()
                 .id(1L)
                 .clientId(10L)
+                .chefId(20L)
                 .date(LocalDate.of(2024, Month.JANUARY, 1))
                 .status(OrderStatus.PENDIENTE)
                 .restaurantId(1L)
@@ -57,9 +58,33 @@ public class OrderModelFactory {
         return OrderModel.builder()
                 .id(1L)
                 .clientId(10L)
+                .chefId(20L)
                 .date(LocalDate.of(2024, Month.JANUARY, 1))
                 .status(OrderStatus.EN_PREPARACION)
                 .restaurantId(1L)
+                .build();
+    }
+
+    public static OrderModel createSavedOrderInPreparationAssignedToOtherEmployee() {
+        return OrderModel.builder()
+                .id(1L)
+                .clientId(10L)
+                .chefId(99L)
+                .date(LocalDate.of(2024, Month.JANUARY, 1))
+                .status(OrderStatus.EN_PREPARACION)
+                .restaurantId(1L)
+                .build();
+    }
+
+    public static OrderModel createSavedReadyOrderAssignedToOtherEmployee() {
+        return OrderModel.builder()
+                .id(1L)
+                .clientId(10L)
+                .chefId(99L)
+                .date(LocalDate.of(2024, Month.JANUARY, 1))
+                .status(OrderStatus.LISTO)
+                .restaurantId(1L)
+                .securityPin("482951")
                 .build();
     }
 

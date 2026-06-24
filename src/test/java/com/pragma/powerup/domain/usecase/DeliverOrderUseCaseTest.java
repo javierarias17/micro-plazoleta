@@ -10,6 +10,7 @@ import com.pragma.powerup.domain.model.OrderModel;
 import com.pragma.powerup.domain.model.OrderStatus;
 import com.pragma.powerup.domain.spi.IAuthenticatedUserPort;
 import com.pragma.powerup.domain.spi.IOrderPersistencePort;
+import com.pragma.powerup.domain.spi.ITraceabilityPort;
 import com.pragma.powerup.domain.spi.IUserServicePort;
 import com.pragma.powerup.factory.OrderModelFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +49,9 @@ class DeliverOrderUseCaseTest {
 
     @Mock
     private IAuthenticatedUserPort authenticatedUserPort;
+
+    @Mock
+    private ITraceabilityPort traceabilityPort;
 
     @InjectMocks
     private DeliverOrderUseCase deliverOrderUseCase;
@@ -128,6 +132,20 @@ class DeliverOrderUseCaseTest {
         when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
         when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
         when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(orderFromOtherRestaurant));
+
+        assertThrows(ForbiddenException.class,
+                () -> deliverOrderUseCase.deliverOrder(ORDER_ID, CORRECT_PIN));
+
+        verify(orderPersistencePort, never()).updateOrder(any());
+    }
+
+    @Test
+    void Expect_ForbiddenException_When_OrderIsAssignedToAnotherEmployee() {
+        OrderModel orderAssignedToOther = OrderModelFactory.createSavedReadyOrderAssignedToOtherEmployee();
+
+        when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(EMPLOYEE_ID);
+        when(userServicePort.findRestaurantIdByEmployeeId(EMPLOYEE_ID)).thenReturn(Optional.of(RESTAURANT_ID));
+        when(orderPersistencePort.findById(ORDER_ID)).thenReturn(Optional.of(orderAssignedToOther));
 
         assertThrows(ForbiddenException.class,
                 () -> deliverOrderUseCase.deliverOrder(ORDER_ID, CORRECT_PIN));

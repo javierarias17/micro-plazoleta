@@ -59,6 +59,12 @@ public class DeliverOrderUseCase implements IDeliverOrderServicePort {
             throw new ForbiddenException();
         }
 
+        if (!employeeId.equals(order.getChefId())) {
+            throw new ForbiddenException(
+                    FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
+                    Map.of(FieldConstants.ORDER_ID, FunctionalMessageConstants.ORDER_ASSIGNED_TO_ANOTHER_EMPLOYEE));
+        }
+
         if (order.getStatus() != OrderStatus.LISTO) {
             throw new OrderNotReadyException(
                     FunctionalMessageConstants.BUSINESS_VALIDATION_FAILED,
